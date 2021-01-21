@@ -11,24 +11,10 @@ shinyServer(function(input, output, session){
   #  Leer data para Gráfico 2
   data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
   data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
-
-  #  Leer data para Gráfico 3
-  data3 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Casos%20acumulados.csv")
-  data3$fecha_resultado <- as.Date(data3$fecha_resultado)
-
-  #  Leer data para Gráfico 4
-  data4 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Positivos%20y%20total%20incio.csv")
-  data4$fecha_resultado <- as.Date(data4$fecha_resultado)
-  Casos_acumulados <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Casos%20acumulados.csv")
-  
-  #  Leer data para Gráfico 5
-  data5 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Positivos%20y%20total%20incio.csv")
-  data5$fecha_resultado <- as.Date(data5$fecha_resultado)
-
   
   #################################################### Set up loading screen
   
-  Sys.sleep(3) # do something that takes time
+  Sys.sleep(3) # plots
   waiter_hide()
   
   #################################################### Leer data ----
@@ -141,7 +127,7 @@ shinyServer(function(input, output, session){
     data_res_dis
   })
   
-  # Colores
+  # Colores ----
   
   myPal1 <- c(
     rgb(3, 4, 94, maxColorValue = 255))
@@ -354,21 +340,12 @@ shinyServer(function(input, output, session){
   
   ## 3)  Codigo gráfico 3 (Paquete Dygraph)
   
-  positivos=data3$total_positivo=as.numeric(na.locf(data3$total_positivo))
-  recuperados=data3$total_recuperado=as.numeric(na.locf(data3$total_recuperado))
-  sintomaticos=data3$total_sintomaticos=as.numeric(na.locf(data3$total_sintomaticos))
-  defunciones=data3$total_defunciones=as.numeric(na.locf(data3$total_defunciones))
-  activos=data3$total_activos=as.numeric(na.locf(data3$total_activos))
-  Z=cbind(positivos, recuperados, sintomaticos, defunciones, activos)
-  df=xts(Z,data3$fecha_resultado)
-  
   output$plot3 <- renderDygraph({
-    dygraph(df) %>%
-      dySeries("positivos", label = "Positivos") %>%
-      dySeries("recuperados", label = "Recuperados") %>%
-      dySeries("sintomaticos", label = "Sintomáticos") %>%
-      dySeries("defunciones", label = "Defunciones") %>%
-      dySeries("activos", label = "Activos") %>%
+    dygraph(data_dpto_r()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones)],) %>%
+      dySeries("total_positivo", label = "Positivos") %>%
+      dySeries("total_recuperado", label = "Recuperados") %>%
+      dySeries("total_sintomaticos", label = "Sintomáticos") %>%
+      dySeries("total_defunciones", label = "Defunciones") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -419,17 +396,12 @@ shinyServer(function(input, output, session){
   })
 
 
-  ## 4)  Codigo gráfico 4 (Paquete Dygraph)
-  
-  totalpositivos=data4$total_positivo=as.numeric(na.locf(data4$total_positivo))
-  totalinicio=data4$total_inicio=as.numeric(na.locf(data4$total_inicio))
-  Z=cbind(totalpositivos, totalinicio)
-  DF1=xts(Z,data4$fecha_resultado)
-  
+  ## 4)  Codigo gráfico 4 (lineal) (Paquete Dygraph)
+
   output$plot4 <- renderDygraph({
-    dygraph(DF1) %>%
-      dySeries("totalpositivos", label = "Total de casos positivos por covid-19") %>%
-      dySeries("totalinicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+    dygraph(data_dpto_r()[, .(fecha, total_positivo, total_inicio)],) %>%
+      dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
+      dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -479,20 +451,12 @@ shinyServer(function(input, output, session){
       dyOptions(colors = myPal2)
   })
 
-  ## 5)  Codigo gráfico 5 (Paquete Dygraph)
-  
-  xposi<-log10(data5$total_positivo)
-  xini<-log10(data5$total_inicio)
-  
-  totalpositivos=xposi=as.numeric(na.locf(xposi))
-  totalinicio=xini=as.numeric(na.locf(xini))
-  Z=cbind(totalpositivos, totalinicio)
-  DF2=xts(Z,data5$fecha_resultado)
+  ## 5)  Codigo gráfico 5 (logaritmo) (Paquete Dygraph)
   
   output$plot5 <- renderDygraph({
-    dygraph(DF2) %>%
-      dySeries("totalpositivos", label = "Total de casos positivos por covid-19") %>%
-      dySeries("totalinicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+    dygraph(data_dpto_r()[, .(fecha, xposi, xini)],) %>%
+      dySeries("xposi", label = "Total de casos positivos por covid-19") %>%
+      dySeries("xini", label = "Total de casos de inicio de síntomas por covid-19") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -602,10 +566,11 @@ shinyServer(function(input, output, session){
 
     shiny::req(input$prov)
     
-      dygraph(data_prov_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos)],) %>%
+      dygraph(data_prov_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones)],) %>%
         dySeries("total_positivo", label = "Positivos") %>%
         dySeries("total_recuperado", label = "Recuperados") %>%
         dySeries("total_sintomaticos", label = "Sintomáticos") %>%
+        dySeries("total_defunciones", label = "Defunciones") %>%
         dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                  labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
         dyCSS(textConnection("
@@ -662,8 +627,9 @@ shinyServer(function(input, output, session){
     
     shiny::req(input$prov)
     
-    dygraph(data_prov_subset()[, .(fecha, total_positivo)],) %>%
-      dySeries("total_positivo", label = "Positivos") %>%
+    dygraph(data_prov_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
+      dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
+      dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -741,7 +707,7 @@ shinyServer(function(input, output, session){
       # dyShading(from = data_traffic_subset()[, .(cases_q2)], to = data_traffic_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y") 
   })
   
-  ## Semaforo Provincial: Defunciones
+  ## Semaforo distrital: Defunciones
   
   output$dygraph_dis_new_deaths <- renderDygraph({
     
@@ -768,16 +734,17 @@ shinyServer(function(input, output, session){
   
   
   
-  ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
+  ## 3)  Codigo gráfico 3 a nivel DISTRITAL (Paquete Dygraph)
   
   output$plot3_dis <- renderDygraph({
     
     shiny::req(input$dis)
     
-    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos)],) %>%
+    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones)],) %>%
       dySeries("total_positivo", label = "Positivos") %>%
       dySeries("total_recuperado", label = "Recuperados") %>%
       dySeries("total_sintomaticos", label = "Sintomáticos") %>%
+      dySeries("total_defunciones", label = "Defunciones") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -828,14 +795,15 @@ shinyServer(function(input, output, session){
   })
   
   
-  ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
+  ## 3)  Codigo gráfico 4 a nivel DISTRITAL (Paquete Dygraph)
   
   output$plot4_dis <- renderDygraph({
     
-    shiny::req(input$prov)
+    shiny::req(input$dis)
     
-    dygraph(data_dis_subset()[, .(fecha, total_positivo)],) %>%
-      dySeries("total_positivo", label = "Positivos") %>%
+    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
+      dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
+      dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("

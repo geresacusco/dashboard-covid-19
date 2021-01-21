@@ -5,6 +5,7 @@ read_data_dpto <- function() {
   data_dpto <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/R_new_design/data/data_regional.csv", keepLeadingZeros = TRUE)
   data_dpto$fecha <- as.Date(data_dpto$fecha)
   data_dpto <- subset(data_dpto, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
+  data_dpto <- mutate(data_dpto, xposi=log10(total_positivo), xini = log10(total_inicio))
   return(data_dpto)
 }
 
