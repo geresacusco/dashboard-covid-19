@@ -1,0 +1,890 @@
+shinyServer(function(input, output, session){
+  ######################################## Data de github
+
+  # Leer data para  Mapa y datos actualizados
+  data_mpp <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Data/casos-distrital.csv", keepLeadingZeros = TRUE)
+  cusco_map <- jsonlite::fromJSON("https://raw.githubusercontent.com/branmora/diresacusco/main/R/files/districts.geojson", simplifyVector = FALSE)
+  
+  # Leer data para el bubble plot
+  data_raw <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
+
+  #  Leer data para Gráfico 2
+  data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
+  data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
+
+  #  Leer data para Gráfico 3
+  data3 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Casos%20acumulados.csv")
+  data3$fecha_resultado <- as.Date(data3$fecha_resultado)
+
+  #  Leer data para Gráfico 4
+  data4 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Positivos%20y%20total%20incio.csv")
+  data4$fecha_resultado <- as.Date(data4$fecha_resultado)
+  Casos_acumulados <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Casos%20acumulados.csv")
+  
+  #  Leer data para Gráfico 5
+  data5 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Gr%C3%A1ficas%20seguras/Positivos%20y%20total%20incio.csv")
+  data5$fecha_resultado <- as.Date(data5$fecha_resultado)
+
+  
+  #################################################### Set up loading screen
+  
+  Sys.sleep(3) # do something that takes time
+  waiter_hide()
+  
+  #################################################### Leer data ----
+  
+  # Leer data
+  source("01_scripts/read_data.R")
+  
+  
+  #################################################### Hacer data reactiva y subset por provincia y distrito ----
+  
+  ### Make data reactive ----
+  
+  # Regional (semaforo V2)
+  
+  data_dpto_r <- reactive({
+    data_dpto <- read_data_dpto()
+  })
+  
+  # Provincial (semaforo V2)
+  
+  data_prov_r <- reactive({
+    data_prov <- read_data_prov()
+  })
+  
+  # Distrital (semaforo v2)
+  
+  data_dis_r <- reactive({
+    data_dis <- read_data_dis()
+  })  
+  
+  # Cusco (semaforo)
+  data_cusco_r <- reactive({
+    data_cusco <- read_data_cusco()
+  })
+
+  # Valores del semáforo
+  data_semaforo_r <- reactive({
+    data_semaforo <- read_semaforo()
+  })
+  
+  # Camas
+  data_beds <- reactive({
+    data_camas <- read_data_beds()
+  })
+  
+  # Provincial (test)
+  data_corona <- reactive({
+    data_res <- read_data_corona()
+  })
+
+  ##### Selectores ----
+  
+  ## Provincia
+  
+  # Province selector -----
+  output$selector_prov <- renderUI({
+    
+    pickerInput(
+      inputId = "prov",
+      label = "Elige una provincia:", 
+      choices = data_prov_r()[, unique(provincia)],
+      selected = "CUSCO",
+      options = list(
+        `live-search` = TRUE,
+        style = "btn-info",
+        maxOptions = 7
+      )
+    )
+    
+  })
+  
+  # Subset data by province ----
+  data_prov_subset <- reactive({
+    shiny::req(input$prov)
+    data_res_dis <- copy(data_prov_r()[.(input$prov), on = .(provincia)])
+    data_res_dis
+  })
+  
+  # Subset semaforo por provincia ----
+  data_semaforo_subset <- reactive({
+    shiny::req(input$prov)
+    data_trat <- copy(data_semaforo_r()[.(input$prov), on = .(provincia)])
+    data_trat
+  })
+
+
+  ## Distrito
+  
+  # District selector -----
+  output$selector_dis <- renderUI({
+    
+    pickerInput(
+      inputId = "dis",
+      label = "Elige un distrito:", 
+      choices = data_dis_r()[, unique(distrito)],
+      selected = "CUSCO",
+      options = list(
+        `live-search` = TRUE,
+        style = "btn-info",
+        maxOptions = 7
+      )
+    )
+    
+  })
+  
+  # Subset data by district ----
+  data_dis_subset <- reactive({
+    shiny::req(input$dis)
+    data_res_dis <- copy(data_dis_r()[.(input$dis), on = .(distrito)])
+    data_res_dis
+  })
+  
+  # Colores
+  
+  myPal1 <- c(
+    rgb(3, 4, 94, maxColorValue = 255))
+  print(myPal1)
+  
+  myPal2 <- c(
+    rgb(255, 134, 0, maxColorValue = 255),
+    rgb(3, 4, 94, maxColorValue = 255))
+  print(myPal2)
+  
+  myPal3 <- c(
+    rgb(255, 134, 0, maxColorValue = 255),
+    rgb(251, 54, 64, maxColorValue = 255),
+    rgb(3, 4, 94, maxColorValue = 255))
+  print(myPal3)
+  
+  myPal5 <- c(
+    rgb(255, 134, 0, maxColorValue = 255),
+    rgb(251, 54, 64, maxColorValue = 255),
+    rgb(6, 214, 160, maxColorValue = 255),
+    rgb(115, 113, 252, maxColorValue = 255),
+    rgb(3, 4, 94, maxColorValue = 255))
+  print(myPal5)
+  
+  ######################################## Código de gráficos ----
+  
+  ### 1) Código para graficar el semáforo COVID ----
+  
+  ## Casos
+  output$dygraph_region_casos <- renderDygraph({
+    
+    dygraph(data_dpto_r()[, .(fecha, positivo)]) %>%
+      dySeries("positivo", label = "Promedio de 7 dias") %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#003169", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "372.85", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "372.85", to = "1118.355", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "1118.355", to = "1491.14", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  
+  # dyLegend(width = 380, showZeroValues = TRUE, labelsDiv = "legend_plot3",
+  #          labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+  
+  ## Defunciones
+  output$dygraph_region_defunciones <- renderDygraph({
+    
+    dygraph(data_dpto_r()[, .(fecha, defunciones)]) %>%
+      dySeries("defunciones", label = "Promedio de 7 dias") %>%
+      # dyAxis("y", label = "Deaths") %>%
+      dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
+                      fillColor = "#142850", strokeColor = "#222d32") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#142850", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "6.965", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "6.965", to = "20.895", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "20.895", to = "27.86", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  ## Camas
+  output$dygraph_region_camas <- renderDygraph({
+    
+    dygraph(data_beds()[, .(DateRep, UCI, NOUCI, NIVELII)]) %>%
+      dySeries("UCI", label = "Ocupacion UCI") %>%
+      dySeries("NOUCI", label = "Ocupacion No UCI") %>%
+      dySeries("NIVELII", label = "Ocupacion Nivel II") %>%
+      dyRangeSelector(dateWindow = c(data_beds()[, max(DateRep) - 80], data_beds()[, max(DateRep) + 1]),
+                      fillColor = c("#03045e", "#3a0ca3","#7371fc"), strokeColor = "#03045e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#03045e", "#3a0ca3","#7371fc")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyShading(from = "0", to = "0.25", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "0.25", to = "0.65", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "0.65", to = "1.5", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  # 2) Código para graficar el mapa del cusco
+  
+  data_mpp <- mutate(data_mpp, TOTAL_POS = TOTAL_positivo)
+  data_mpp <- mutate(data_mpp, PR_POS = PR_positivo)
+  data_mpp <- mutate(data_mpp, PM_POS = PM_positivo)
+  
+  # Casos
+  
+  output$map_total_positivo <- renderHighchart ({
+    highchart() %>%
+      hc_add_series_map(
+        cusco_map, data_mpp, value = "TOTAL_positivo", joinBy = 'IDDIST',
+        name = "Número de Casos")  %>%
+      hc_mapNavigation(enabled = TRUE) %>%
+      hc_colorAxis(minColor = "#06d6a0", maxColor = "#03045e")  %>%
+      hc_tooltip(
+        pointFormat = "Distrito {point.distrito}: {point.TOTAL_POS}")
+  })
+
+  output$map_pr_positivo <- renderHighchart ({
+    highchart() %>%
+      hc_add_series_map(
+        cusco_map, data_mpp, value = "PR_positivo", joinBy = 'IDDIST',
+        name = "Número de Casos")  %>%
+      hc_mapNavigation(enabled = TRUE) %>%
+      hc_colorAxis(minColor = "#ff8600", maxColor = "#03045e")  %>%
+      hc_tooltip(
+        pointFormat = "Distrito {point.distrito}: {point.PR_POS}")
+  })
+  
+  output$map_pm_positivo <- renderHighchart ({
+    highchart() %>%
+      hc_add_series_map(
+        cusco_map, data_mpp, value = "PM_positivo", joinBy = 'IDDIST',
+        name = "Número de Casos")  %>%
+      hc_mapNavigation(enabled = TRUE) %>%
+      hc_colorAxis(minColor = "#7371fc", maxColor = "#03045e")  %>%
+      hc_tooltip(
+        pointFormat = "Distrito {point.distrito}: {point.PM_POS}")
+  })
+        
+  # 3) Código para graficar el bubble plot ----
+  
+  data_raw$Fecha <- as.Date(data_raw$Fecha, "%d/%m/%Y")
+  
+  datacusco_str <- distinct(data_raw, Distrito, .keep_all = TRUE) %>% 
+    mutate(x = Densidad, y = Incidencia, z = Poblacion) 
+  
+  datacusco_seq <- data_raw %>% 
+    arrange(Distrito, Fecha) %>% 
+    group_by(Distrito) %>% 
+    do(sequence = list_parse(select(., x = Densidad, y = Incidencia, z = Poblacion)))
+  
+  
+  data_cusco <- left_join(datacusco_str, datacusco_seq) 
+  
+  # summarise_if(data_raw, is.numeric, funs(min, max)) %>% 
+  #   tidyr::gather(key, value) %>% 
+  #   arrange(key)
+  
+  output$bubble1 <- renderHighchart ({  
+  highchart() %>% 
+    hc_add_series(data_cusco, type = "bubble",
+                  minSize = 0, maxSize = 30) %>% 
+    hc_motion(enabled = TRUE, series = 0, labels = unique(data_raw$Fecha),
+              loop = TRUE, autoPlay = TRUE, 
+              updateInterval = 1000, magnet = list(step =  20)) %>% 
+    hc_plotOptions(series = list(showInLegend = FALSE)) %>% 
+    hc_xAxis(type = "logarithmic", min = 12, max = 15000) %>% 
+    hc_yAxis(min = 0, max = 129.6) %>% 
+    hc_add_theme(hc_theme_smpl())
+  })
+  
+  
+  ## 3)  Codigo gráfico 3 (Paquete Dygraph)
+  
+  positivos=data3$total_positivo=as.numeric(na.locf(data3$total_positivo))
+  recuperados=data3$total_recuperado=as.numeric(na.locf(data3$total_recuperado))
+  sintomaticos=data3$total_sintomaticos=as.numeric(na.locf(data3$total_sintomaticos))
+  defunciones=data3$total_defunciones=as.numeric(na.locf(data3$total_defunciones))
+  activos=data3$total_activos=as.numeric(na.locf(data3$total_activos))
+  Z=cbind(positivos, recuperados, sintomaticos, defunciones, activos)
+  df=xts(Z,data3$fecha_resultado)
+  
+  output$plot3 <- renderDygraph({
+    dygraph(df) %>%
+      dySeries("positivos", label = "Positivos") %>%
+      dySeries("recuperados", label = "Recuperados") %>%
+      dySeries("sintomaticos", label = "Sintomáticos") %>%
+      dySeries("defunciones", label = "Defunciones") %>%
+      dySeries("activos", label = "Activos") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal5)
+  })
+
+
+  ## 4)  Codigo gráfico 4 (Paquete Dygraph)
+  
+  totalpositivos=data4$total_positivo=as.numeric(na.locf(data4$total_positivo))
+  totalinicio=data4$total_inicio=as.numeric(na.locf(data4$total_inicio))
+  Z=cbind(totalpositivos, totalinicio)
+  DF1=xts(Z,data4$fecha_resultado)
+  
+  output$plot4 <- renderDygraph({
+    dygraph(DF1) %>%
+      dySeries("totalpositivos", label = "Total de casos positivos por covid-19") %>%
+      dySeries("totalinicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-110%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: black;
+                    padding-left:5px;
+                    padding-right:2px;
+                    margin-left:-5px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:2px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal2)
+  })
+
+  ## 5)  Codigo gráfico 5 (Paquete Dygraph)
+  
+  xposi<-log10(data5$total_positivo)
+  xini<-log10(data5$total_inicio)
+  
+  totalpositivos=xposi=as.numeric(na.locf(xposi))
+  totalinicio=xini=as.numeric(na.locf(xini))
+  Z=cbind(totalpositivos, totalinicio)
+  DF2=xts(Z,data5$fecha_resultado)
+  
+  output$plot5 <- renderDygraph({
+    dygraph(DF2) %>%
+      dySeries("totalpositivos", label = "Total de casos positivos por covid-19") %>%
+      dySeries("totalinicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal2)
+  })
+  
+  ############################ Código para graficar la data provincial ----
+  
+  # Grafico provincias del Cusco
+  
+  
+  ## Semaforo Provincial: Casos
+  
+  output$dygraph_prov_new_cases <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_prov_subset()[, .(fecha, positivo)],
+            main = input$prov) %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = data_semaforo_subset()[, .(cases_q0)], to = data_semaforo_subset()[, .(cases_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = data_semaforo_subset()[, .(cases_q1)], to = data_semaforo_subset()[, .(cases_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = data_semaforo_subset()[, .(cases_q2)], to = data_semaforo_subset()[, .(cases_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
+  })
+
+  ## Semaforo Provincial: Defunciones
+  
+  output$dygraph_prov_new_deaths <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_prov_subset()[, .(fecha, defunciones)],
+            main = input$prov) %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = data_semaforo_subset()[, .(deaths_q0)], to = data_semaforo_subset()[, .(deaths_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = data_semaforo_subset()[, .(deaths_q1)], to = data_semaforo_subset()[, .(deaths_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = data_semaforo_subset()[, .(deaths_q2)], to = data_semaforo_subset()[, .(deaths_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
+  })  
+  
+  
+  ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
+  
+  output$plot3_prov <- renderDygraph({
+
+    shiny::req(input$prov)
+    
+      dygraph(data_prov_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos)],) %>%
+        dySeries("total_positivo", label = "Positivos") %>%
+        dySeries("total_recuperado", label = "Recuperados") %>%
+        dySeries("total_sintomaticos", label = "Sintomáticos") %>%
+        dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+                 labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+        dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+        dyOptions(colors = myPal3)
+  })
+    
+  
+  ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
+  
+  output$plot4_prov <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_prov_subset()[, .(fecha, total_positivo)],) %>%
+      dySeries("total_positivo", label = "Positivos") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: auto !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-110%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: black;
+                    padding-left:5px;
+                    padding-right:2px;
+                    margin-left:-5px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:2px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal1)
+  })
+  
+  
+  ############################ Código para graficar la data distrital ----
+  
+  
+  ## Semaforo Distrital: Casos
+  
+  output$dygraph_dis_new_cases <- renderDygraph({
+    
+    shiny::req(input$dis)
+    
+    dygraph(data_dis_subset()[, .(fecha, positivo)],
+            main = input$prov) %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7)
+      # dyShading(from = data_traffic_subset()[, .(cases_q0)], to = data_traffic_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
+      # dyShading(from = data_traffic_subset()[, .(cases_q1)], to = data_traffic_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
+      # dyShading(from = data_traffic_subset()[, .(cases_q2)], to = data_traffic_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y") 
+  })
+  
+  ## Semaforo Provincial: Defunciones
+  
+  output$dygraph_dis_new_deaths <- renderDygraph({
+    
+    shiny::req(input$dis)
+    
+    dygraph(data_dis_subset()[, .(fecha, defunciones)],
+            main = input$prov) %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7)
+      # dyShading(from = data_traffic_subset()[, .(deaths_q0)], to = data_traffic_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
+      # dyShading(from = data_traffic_subset()[, .(deaths_q1)], to = data_traffic_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
+      # dyShading(from = data_traffic_subset()[, .(deaths_q2)], to = data_traffic_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y") 
+  })  
+  
+  
+  
+  
+  ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
+  
+  output$plot3_dis <- renderDygraph({
+    
+    shiny::req(input$dis)
+    
+    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos)],) %>%
+      dySeries("total_positivo", label = "Positivos") %>%
+      dySeries("total_recuperado", label = "Recuperados") %>%
+      dySeries("total_sintomaticos", label = "Sintomáticos") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal3)
+  })
+  
+  
+  ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
+  
+  output$plot4_dis <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_dis_subset()[, .(fecha, total_positivo)],) %>%
+      dySeries("total_positivo", label = "Positivos") %>%
+      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+      dyCSS(textConnection("
+                  .dygraph-legend {
+                  width: 150 !important;
+                  min-width: 150px;
+                  color: #000445;
+                  background-color: rgb(250, 250, 250, 0.4) !important;
+                  padding-left:5px;
+                  border-color:#000445;
+                  border-style:solid;
+                  border-width:3px;
+                  transition:0s 2s;
+                  z-index: 80 !important;
+                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+                  border-radius: 0px;
+                  }
+                  .dygraph-legend:hover{
+                  transform: translate(-50%);
+                  transition: 3s;
+                  }
+                
+                  .dygraph-legend > span {
+                    color: #000445;
+                    padding-left:3px;
+                    padding-right:3px;
+                    margin-left:-3px;
+                    background-color: rgb(250, 250, 250, 0.4) !important;
+                    display: block;
+                  }
+                
+                  .dygraph-legend > span:first-child {
+                    margin-top:3px;
+                  }
+
+                  .dygraph-legend > span > span{
+                    display: inline;
+                  }
+                  
+                  .highlight {
+                    border-left: 3px solid #000445;
+                    padding-left:3px !important;
+                  }
+                ")
+      ) %>%
+      dyRangeSelector() %>%
+      dyOptions(colors = myPal1)
+  })
+  
+  
+  
+})
