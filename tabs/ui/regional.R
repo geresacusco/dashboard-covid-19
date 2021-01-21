@@ -1,7 +1,7 @@
 regional <- tabPanel(title = "Nivel Regional", 
                  value = "regional",
                  br(),
-                 HTML("<h1><center>Análisis Situacional <b>GERESA CUSCO</b> COVID-19</center></h1>"),
+                 HTML("<h1><center>Análisis de la pandemia por COVID-19</center></h1>"),
                  column(width = 12,
                         br(), br(),
                         wellPanel(

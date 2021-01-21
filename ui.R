@@ -20,12 +20,12 @@ shinyUI(
                         type="image/png" />'))),
     div(style="padding: 1px 0px; width: '100%'",
         titlePanel(
-          title="", windowTitle = "DASHBOARD"
+          title="", windowTitle = "GERESA Dashboard"
         )
     ),
     ##-- Header ----
     navbarPage(title = div(img(src="img/logo.png",
-                               height = "75px"), style = "padding-left:100px;"),
+                               height = "110px"), style = "padding-left:50px;"),
                id = "navbar",
                selected = "regional",
                theme = "styles.css", 
