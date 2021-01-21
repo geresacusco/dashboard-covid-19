@@ -8,7 +8,7 @@
 * 0. Pasos previos para juntar las bases de datos: Notificación y SISCOVID
 
 * Definir el directorio de trabajo actual
-global path "C:\Users\GRDS\Documents\GitHub\diresacusco\R_new_design\data"
+global path "C:\Users\SARA\OneDrive\GORE\COMANDO COVID\6. TABLERO DE MANDO\dashboard-covid-19\data"
 	global main "$path"
 	global stata "$path/stata"
 set more off, permanent

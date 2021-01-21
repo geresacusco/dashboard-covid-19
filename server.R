@@ -50,9 +50,14 @@ shinyServer(function(input, output, session){
     data_cusco <- read_data_cusco()
   })
 
-  # Valores del semáforo
+  # Valores del semáforo provincial
   data_semaforo_r <- reactive({
     data_semaforo <- read_semaforo()
+  })
+  
+  # Valores del semáforo distrital
+  data_semaforo_dis_r <- reactive({
+    data_semaforo_dis <- read_semaforo_dis()
   })
   
   # Camas
@@ -89,8 +94,8 @@ shinyServer(function(input, output, session){
   # Subset data by province ----
   data_prov_subset <- reactive({
     shiny::req(input$prov)
-    data_res_dis <- copy(data_prov_r()[.(input$prov), on = .(provincia)])
-    data_res_dis
+    data_res_prov <- copy(data_prov_r()[.(input$prov), on = .(provincia)])
+    data_res_prov
   })
   
   # Subset semaforo por provincia ----
@@ -99,7 +104,6 @@ shinyServer(function(input, output, session){
     data_trat <- copy(data_semaforo_r()[.(input$prov), on = .(provincia)])
     data_trat
   })
-
 
   ## Distrito
   
@@ -125,6 +129,13 @@ shinyServer(function(input, output, session){
     shiny::req(input$dis)
     data_res_dis <- copy(data_dis_r()[.(input$dis), on = .(distrito)])
     data_res_dis
+  })
+
+  # Subset semaforo por distrito ----
+  data_semaforo_dis_subset <- reactive({
+    shiny::req(input$dis)
+    data_trat_dis <- copy(data_semaforo_dis_r()[.(input$dis), on = .(distrito)])
+    data_trat_dis
   })
   
   # Colores ----
@@ -512,14 +523,12 @@ shinyServer(function(input, output, session){
   
   
   ## Semaforo Provincial: Casos
-  
   output$dygraph_prov_new_cases <- renderDygraph({
     
     shiny::req(input$prov)
     
     dygraph(data_prov_subset()[, .(fecha, positivo)],
             main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -536,7 +545,6 @@ shinyServer(function(input, output, session){
   })
 
   ## Semaforo Provincial: Defunciones
-  
   output$dygraph_prov_new_deaths <- renderDygraph({
     
     shiny::req(input$prov)
@@ -561,7 +569,6 @@ shinyServer(function(input, output, session){
   
   
   ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
-  
   output$plot3_prov <- renderDygraph({
 
     shiny::req(input$prov)
@@ -620,9 +627,7 @@ shinyServer(function(input, output, session){
         dyOptions(colors = myPal3)
   })
     
-  
   ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
-  
   output$plot4_prov <- renderDygraph({
     
     shiny::req(input$prov)
@@ -691,7 +696,6 @@ shinyServer(function(input, output, session){
     
     dygraph(data_dis_subset()[, .(fecha, positivo)],
             main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -701,10 +705,10 @@ shinyServer(function(input, output, session){
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7)
-      # dyShading(from = data_traffic_subset()[, .(cases_q0)], to = data_traffic_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
-      # dyShading(from = data_traffic_subset()[, .(cases_q1)], to = data_traffic_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
-      # dyShading(from = data_traffic_subset()[, .(cases_q2)], to = data_traffic_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y") 
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(cases_q0)], to = data_semaforo_dis_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(cases_q1)], to = data_semaforo_dis_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(cases_q2)], to = data_semaforo_dis_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y")
   })
   
   ## Semaforo distrital: Defunciones
@@ -725,13 +729,11 @@ shinyServer(function(input, output, session){
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7)
-      # dyShading(from = data_traffic_subset()[, .(deaths_q0)], to = data_traffic_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
-      # dyShading(from = data_traffic_subset()[, .(deaths_q1)], to = data_traffic_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
-      # dyShading(from = data_traffic_subset()[, .(deaths_q2)], to = data_traffic_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y") 
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q0)], to = data_semaforo_dis_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q1)], to = data_semaforo_dis_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
+      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q2)], to = data_semaforo_dis_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y")
   })  
-  
-  
   
   
   ## 3)  Codigo gráfico 3 a nivel DISTRITAL (Paquete Dygraph)

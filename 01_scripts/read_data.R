@@ -37,13 +37,16 @@ read_data_beds <- function() {
   
 }
 
-# Data valores semáforo
+# Data valores semáforo provincial,
 read_semaforo <- function() {
-  
-  # data_confirmed <- fread("02_data/time_series_19-covid-Confirmed.csv")
   data_semaforo <- fread("https://raw.githubusercontent.com/branmora/covid-19-cusco/master/data/traffic_light.csv")
 }
 
+
+# Data valores semáforo distrital,
+read_semaforo_dis <- function() {
+  data_semaforo_dis <- fread("https://raw.githubusercontent.com/branmora/covid-19-cusco/master/data/traffic_light_distrital.csv")
+}
 
 
 read_data_cusco <- function() {
