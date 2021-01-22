@@ -39,12 +39,12 @@ read_data_beds <- function() {
 
 # Data valores semáforo provincial,
 read_semaforo <- function() {
-  data_semaforo <- fread("https://raw.githubusercontent.com/branmora/covid-19-cusco/master/data/traffic_light.csv")
+  data_semaforo <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/semaforo/traffic_light.csv")
 }
 
 
 # Data valores semáforo distrital,
 read_semaforo_dis <- function() {
-  data_semaforo_dis <- fread("https://raw.githubusercontent.com/branmora/covid-19-cusco/master/data/traffic_light_distrital.csv")
+  data_semaforo_dis <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/semaforo/traffic_light_distrital.csv")
 }
 
