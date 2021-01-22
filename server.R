@@ -2,15 +2,15 @@ shinyServer(function(input, output, session){
   ######################################## Data de github
 
   # Leer data para  Mapa y datos actualizados
-  data_mpp <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Data/casos-distrital.csv", keepLeadingZeros = TRUE)
-  cusco_map <- jsonlite::fromJSON("https://raw.githubusercontent.com/branmora/diresacusco/main/R/files/districts.geojson", simplifyVector = FALSE)
-  
-  # Leer data para el bubble plot
-  data_raw <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
+  data_mpp <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/mapas/casos-distrital.csv", keepLeadingZeros = TRUE)
+  cusco_map <- jsonlite::fromJSON("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/mapas/districts.geojson", simplifyVector = FALSE)
 
-  #  Leer data para Gráfico 2
-  data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
-  data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
+  # # Leer data para el bubble plot
+  # data_raw <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
+
+  # #  Leer data para Gráfico 2
+  # data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
+  # data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
   
   #################################################### Set up loading screen
   
@@ -318,35 +318,35 @@ shinyServer(function(input, output, session){
         
   # 3) Código para graficar el bubble plot ----
   
-  data_raw$Fecha <- as.Date(data_raw$Fecha, "%d/%m/%Y")
-  
-  datacusco_str <- distinct(data_raw, Distrito, .keep_all = TRUE) %>% 
-    mutate(x = Densidad, y = Incidencia, z = Poblacion) 
-  
-  datacusco_seq <- data_raw %>% 
-    arrange(Distrito, Fecha) %>% 
-    group_by(Distrito) %>% 
-    do(sequence = list_parse(select(., x = Densidad, y = Incidencia, z = Poblacion)))
-  
-  
-  data_cusco <- left_join(datacusco_str, datacusco_seq) 
-  
-  # summarise_if(data_raw, is.numeric, funs(min, max)) %>% 
-  #   tidyr::gather(key, value) %>% 
-  #   arrange(key)
-  
-  output$bubble1 <- renderHighchart ({  
-  highchart() %>% 
-    hc_add_series(data_cusco, type = "bubble",
-                  minSize = 0, maxSize = 30) %>% 
-    hc_motion(enabled = TRUE, series = 0, labels = unique(data_raw$Fecha),
-              loop = TRUE, autoPlay = TRUE, 
-              updateInterval = 1000, magnet = list(step =  20)) %>% 
-    hc_plotOptions(series = list(showInLegend = FALSE)) %>% 
-    hc_xAxis(type = "logarithmic", min = 12, max = 15000) %>% 
-    hc_yAxis(min = 0, max = 129.6) %>% 
-    hc_add_theme(hc_theme_smpl())
-  })
+  # data_raw$Fecha <- as.Date(data_raw$Fecha, "%d/%m/%Y")
+  # 
+  # datacusco_str <- distinct(data_raw, Distrito, .keep_all = TRUE) %>% 
+  #   mutate(x = Densidad, y = Incidencia, z = Poblacion) 
+  # 
+  # datacusco_seq <- data_raw %>% 
+  #   arrange(Distrito, Fecha) %>% 
+  #   group_by(Distrito) %>% 
+  #   do(sequence = list_parse(select(., x = Densidad, y = Incidencia, z = Poblacion)))
+  # 
+  # 
+  # data_cusco <- left_join(datacusco_str, datacusco_seq) 
+  # 
+  # # summarise_if(data_raw, is.numeric, funs(min, max)) %>% 
+  # #   tidyr::gather(key, value) %>% 
+  # #   arrange(key)
+  # 
+  # output$bubble1 <- renderHighchart ({  
+  # highchart() %>% 
+  #   hc_add_series(data_cusco, type = "bubble",
+  #                 minSize = 0, maxSize = 30) %>% 
+  #   hc_motion(enabled = TRUE, series = 0, labels = unique(data_raw$Fecha),
+  #             loop = TRUE, autoPlay = TRUE, 
+  #             updateInterval = 1000, magnet = list(step =  20)) %>% 
+  #   hc_plotOptions(series = list(showInLegend = FALSE)) %>% 
+  #   hc_xAxis(type = "logarithmic", min = 12, max = 15000) %>% 
+  #   hc_yAxis(min = 0, max = 129.6) %>% 
+  #   hc_add_theme(hc_theme_smpl())
+  # })
   
   
   ## 3)  Codigo gráfico 3 (Paquete Dygraph)
