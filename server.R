@@ -27,6 +27,10 @@ shinyServer(function(input, output, session){
   
   ### Make data reactive ----
   
+  # Map data
+  
+    map_district <- read_data_map_district()
+  
   # Regional (semaforo V2)
   
   data_dpto_r <- reactive({
@@ -277,43 +281,135 @@ shinyServer(function(input, output, session){
   
   # 2) Código para graficar el mapa del cusco
   
-  data_mpp <- mutate(data_mpp, TOTAL_POS = TOTAL_positivo)
   data_mpp <- mutate(data_mpp, PR_POS = PR_positivo)
   data_mpp <- mutate(data_mpp, PM_POS = PM_positivo)
   
   # Casos
   
-  output$map_total_positivo <- renderHighchart ({
-    highchart() %>%
-      hc_add_series_map(
-        cusco_map, data_mpp, value = "TOTAL_positivo", joinBy = 'IDDIST',
-        name = "Número de Casos")  %>%
-      hc_mapNavigation(enabled = TRUE) %>%
-      hc_colorAxis(minColor = "#06d6a0", maxColor = "#03045e")  %>%
-      hc_tooltip(
-        pointFormat = "Distrito {point.distrito}: {point.TOTAL_POS}")
-  })
-
-  output$map_pr_positivo <- renderHighchart ({
-    highchart() %>%
-      hc_add_series_map(
-        cusco_map, data_mpp, value = "PR_positivo", joinBy = 'IDDIST',
-        name = "Número de Casos")  %>%
-      hc_mapNavigation(enabled = TRUE) %>%
-      hc_colorAxis(minColor = "#ff8600", maxColor = "#03045e")  %>%
-      hc_tooltip(
-        pointFormat = "Distrito {point.distrito}: {point.PR_POS}")
+  data_positivo <- data_dis %>% 
+    group_by(IDDIST) %>% 
+    do(item = list(
+      IDDIST = first(.$IDDIST),
+      sequence = .$total_positivo,
+      total_positivo = first(.$total_positivo))) %>% 
+    .$item
+  
+  output$map_total_positivo <- renderHighchart ({  
+  highchart(type = "map") %>%
+    hc_add_series(
+      data = data_positivo,
+      name = "Casos totales",
+      mapData = map_district,
+      joinBy = 'IDDIST',
+      borderWidth = 0.01
+    ) %>% 
+    hc_mapNavigation(enabled = TRUE) %>%
+    hc_colorAxis(minColor = "#06d6a0", maxColor = "#03045e")  %>%
+    hc_legend(
+      layout = "vertical",
+      reversed = TRUE,
+      floating = TRUE,
+      align = "right"
+    ) %>% 
+    hc_motion(
+      enabled = TRUE,
+      autoPlay = TRUE,
+      axisLabel = "fecha",
+      labels = sort(unique(data_dis$fecha)),
+      series = 0,
+      updateIterval = 50,
+      magnet = list(
+        round = "floor",
+        step = 0.1
+      )
+    ) %>% 
+    hc_chart(marginBottom  = 100)
   })
   
-  output$map_pm_positivo <- renderHighchart ({
-    highchart() %>%
-      hc_add_series_map(
-        cusco_map, data_mpp, value = "PM_positivo", joinBy = 'IDDIST',
-        name = "Número de Casos")  %>%
+  
+
+  # Casos
+  
+  data_positivo_rapida <- data_dis %>% 
+    group_by(IDDIST) %>% 
+    do(item = list(
+      IDDIST = first(.$IDDIST),
+      sequence = .$total_positivo_rapida,
+      total_positivo = first(.$total_positivo_rapida))) %>% 
+    .$item
+  
+  output$map_pr_positivo <- renderHighchart ({  
+    highchart(type = "map") %>%
+      hc_add_series(
+        data = data_positivo_rapida,
+        name = "Casos totales",
+        mapData = map_district,
+        joinBy = 'IDDIST',
+        borderWidth = 0.01
+      ) %>% 
+      hc_mapNavigation(enabled = TRUE) %>%
+      hc_colorAxis(minColor = "#ff8600", maxColor = "#03045e")  %>%
+      hc_legend(
+        layout = "vertical",
+        reversed = TRUE,
+        floating = TRUE,
+        align = "right"
+      ) %>% 
+      hc_motion(
+        enabled = TRUE,
+        autoPlay = TRUE,
+        axisLabel = "fecha",
+        labels = sort(unique(data_dis$fecha)),
+        series = 0,
+        updateIterval = 50,
+        magnet = list(
+          round = "floor",
+          step = 0.1
+        )
+      ) %>% 
+      hc_chart(marginBottom  = 100)
+  })
+  
+  # Casos moleculares
+  
+  data_positivo_molecular <- data_dis %>% 
+    group_by(IDDIST) %>% 
+    do(item = list(
+      IDDIST = first(.$IDDIST),
+      sequence = .$total_positivo_molecular,
+      total_positivo = first(.$total_positivo_molecular))) %>% 
+    .$item
+  
+  output$map_pm_positivo <- renderHighchart ({  
+    highchart(type = "map") %>%
+      hc_add_series(
+        data = data_positivo_molecular,
+        name = "Casos totales",
+        mapData = map_district,
+        joinBy = 'IDDIST',
+        borderWidth = 0.01
+      ) %>% 
       hc_mapNavigation(enabled = TRUE) %>%
       hc_colorAxis(minColor = "#7371fc", maxColor = "#03045e")  %>%
-      hc_tooltip(
-        pointFormat = "Distrito {point.distrito}: {point.PM_POS}")
+      hc_legend(
+        layout = "vertical",
+        reversed = TRUE,
+        floating = TRUE,
+        align = "right"
+      ) %>% 
+      hc_motion(
+        enabled = TRUE,
+        autoPlay = TRUE,
+        axisLabel = "fecha",
+        labels = sort(unique(data_dis$fecha)),
+        series = 0,
+        updateIterval = 50,
+        magnet = list(
+          round = "floor",
+          step = 0.1
+        )
+      ) %>% 
+      hc_chart(marginBottom  = 100)
   })
         
   # 3) Código para graficar el bubble plot ----

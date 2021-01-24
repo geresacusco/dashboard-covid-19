@@ -1,5 +1,11 @@
 # Leer data de Github -----
 
+# Data de mapa distrital
+
+read_data_map_district <- function() {
+cusco_map_district <- jsonlite::fromJSON("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/mapas/districts.geojson", simplifyVector = FALSE)
+}
+
 # Data departamental
 read_data_dpto <- function() {
   data_dpto <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_regional.csv", keepLeadingZeros = TRUE)
@@ -13,7 +19,6 @@ read_data_dpto <- function() {
 read_data_prov <- function() {
   data_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_provincial.csv", keepLeadingZeros = TRUE)
   data_prov$fecha <- as.Date(data_prov$fecha)
-  data_prov$fecha <- as.Date(data_prov$fecha)
   data_prov <- subset(data_prov, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
   return(data_prov)
 }
@@ -22,8 +27,8 @@ read_data_prov <- function() {
 read_data_dis <- function() {
   data_dis <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_distrital.csv", keepLeadingZeros = TRUE)
   data_dis$fecha <- as.Date(data_dis$fecha)
-  data_dis$fecha <- as.Date(data_dis$fecha)
   data_dis <- subset(data_dis, fecha > as.Date("2020-03-12") & fecha < Sys.Date() -1)
+  data_dis <- mutate(data_dis, IDDIST = ubigeo)
   return(data_dis)
 }
 
