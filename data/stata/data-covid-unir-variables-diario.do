@@ -8,7 +8,7 @@
 * 0. Pasos previos para juntar las bases de datos: Notificación y SISCOVID
 
 * Definir el directorio de trabajo actual
-global path "C:\Users\SARA\OneDrive\GORE\COMANDO COVID\6. TABLERO DE MANDO\dashboard-covid-19\data"
+global path "/Users/bran/Documents/GitHub/dashboard-covid-19/data"
 	global main "$path"
 	global stata "$path/stata"
 set more off, permanent
@@ -18,14 +18,14 @@ set more off, permanent
 
 *** 1. Pasos previos
 
-use "${stata}\data-covid-unir-variables-brandon.dta", clear
+use "${stata}/data-covid-unir-variables-brandon.dta", clear
 drop ubigeo
 
 ** Quitar acentos a nombres de distritos
 replace distrito = ustrregexra( ustrnormalize( distrito, "nfd" ) , "\p{Mark}", "" )
 
 ** Combinar distritos y ubigeo
-merge m:1 distrito using "${stata}\ubigeo.dta"
+merge m:1 distrito using "${stata}/ubigeo.dta"
 
 ** Generar diagnosticados en otras regionaes
 gen dis_temp = distrito if ubigeo !=""
@@ -161,7 +161,7 @@ reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida 
 tsset fecha
 tsfill
 
-export delimited using "${main}\data_distrital_wide.csv", replace
+export delimited using "${main}/data_distrital_wide.csv", replace
 
 ********************************************************************************
 
@@ -215,7 +215,7 @@ bysort provincia_ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort provincia_ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
 
 * Exportar a CSV
-export delimited using "${main}\data_provincial.csv", replace
+export delimited using "${main}/data_provincial.csv", replace
 
 **** Exportar en formato wide
 replace provincia = subinstr(provincia, " ", "", .)
@@ -227,7 +227,7 @@ reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida 
 tsset fecha
 tsfill
 
-export delimited using "${main}\data_provincial_wide.csv", replace
+export delimited using "${main}/data_provincial_wide.csv", replace
 
 
 ********************************************************************************
