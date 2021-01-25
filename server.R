@@ -8,7 +8,7 @@ shinyServer(function(input, output, session){
   # data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
   # data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
   
-  #################################################### Set up loading screen
+  #################################################### Set up loading screen ----
   
   Sys.sleep(3) # plots
   waiter_hide()
@@ -17,7 +17,6 @@ shinyServer(function(input, output, session){
   
   # Leer data
   source("01_scripts/read_data.R")
-  
   
   #################################################### Hacer data reactiva y subset por provincia y distrito ----
   
@@ -275,7 +274,7 @@ shinyServer(function(input, output, session){
     
   })
   
-  # 2) Código para graficar el mapa del cusco
+  # 2) Código para graficar el mapa del cusco ----
   
   # Casos totales
   
