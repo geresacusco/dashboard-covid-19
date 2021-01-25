@@ -1,10 +1,6 @@
 shinyServer(function(input, output, session){
   ######################################## Data de github
 
-  # Leer data para  Mapa y datos actualizados
-  data_mpp <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/mapas/casos-distrital.csv", keepLeadingZeros = TRUE)
-  cusco_map <- jsonlite::fromJSON("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/mapas/districts.geojson", simplifyVector = FALSE)
-
   # # Leer data para el bubble plot
   # data_raw <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
 
@@ -30,7 +26,7 @@ shinyServer(function(input, output, session){
   # Map data
   
     map_district <- read_data_map_district()
-  
+    data_dis <- read_data_dis()
   # Regional (semaforo V2)
   
   data_dpto_r <- reactive({
@@ -281,10 +277,7 @@ shinyServer(function(input, output, session){
   
   # 2) Código para graficar el mapa del cusco
   
-  data_mpp <- mutate(data_mpp, PR_POS = PR_positivo)
-  data_mpp <- mutate(data_mpp, PM_POS = PM_positivo)
-  
-  # Casos
+  # Casos totales
   
   data_positivo <- data_dis %>% 
     group_by(IDDIST) %>% 
@@ -325,10 +318,8 @@ shinyServer(function(input, output, session){
     ) %>% 
     hc_chart(marginBottom  = 100)
   })
-  
-  
 
-  # Casos
+  # Casos prueba rapida
   
   data_positivo_rapida <- data_dis %>% 
     group_by(IDDIST) %>% 
@@ -337,6 +328,7 @@ shinyServer(function(input, output, session){
       sequence = .$total_positivo_rapida,
       total_positivo = first(.$total_positivo_rapida))) %>% 
     .$item
+  
   
   output$map_pr_positivo <- renderHighchart ({  
     highchart(type = "map") %>%
