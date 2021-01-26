@@ -13,9 +13,9 @@ regional <- tabPanel(title = "Nivel Regional",
                         br(),
                    fluidRow(
                    box(width = 12, 
-                   valueBox("3,590", "Casos totales 2021", icon = icon("virus", "fa-2x")),
-                   valueBox("24,362", "Pruebas procesadas 2021 (moleculares y rapidas)", icon = icon("vial", "fa-2x")),
-                   valueBox("96", "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
+                   valueBox("4,070", "Casos totales 2021", icon = icon("virus", "fa-2x")),
+                   valueBox("26,832", "Pruebas procesadas 2021 (moleculares y rapidas)", icon = icon("vial", "fa-2x")),
+                   valueBox("109", "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
                  ),
 
 
