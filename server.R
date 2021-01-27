@@ -274,6 +274,28 @@ shinyServer(function(input, output, session){
     
   })
   
+  ## Positividad
+  output$dygraph_region_positividad <- renderDygraph({
+    
+    dygraph(data_dpto_r()[, .(fecha, posi_molecular)]) %>%
+      dySeries("posi_molecular", label = "Promedio de 7 dias") %>%
+      # dyAxis("y", label = "Deaths") %>%
+      dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
+                      fillColor = "#142850", strokeColor = "#222d32") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#142850", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "6.965", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "6.965", to = "20.895", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "20.895", to = "27.86", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  
+  
   # 2) Código para graficar el mapa del cusco ----
   
   # Casos totales

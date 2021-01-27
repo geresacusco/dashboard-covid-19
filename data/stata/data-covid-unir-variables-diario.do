@@ -8,7 +8,7 @@
 * 0. Pasos previos para juntar las bases de datos: Notificación y SISCOVID
 
 * Definir el directorio de trabajo actual
-global path "C:\Users\SARA\OneDrive\GORE\COMANDO COVID\6. TABLERO DE MANDO\dashboard-covid-19\data"
+global path "/Users/bran/Documents/GitHub/dashboard-covid-19/data"
 	global main "$path"
 	global stata "$path/stata"
 set more off, permanent
@@ -95,6 +95,7 @@ gen inicio_molecular = 1 if positivo_molecular == 1 & fecha_inicio !=.
 * 2.12 Inicio de síntoma prueba rápida
 gen inicio_rapida = 1 if positivo_molecular == 1 & fecha_inicio !=.
 
+
 tempfile ind2
 save "`ind2'" // Guardar indicadores si fecha_inicio >= 21980
 
@@ -149,6 +150,17 @@ bysort ubigeo: gen total_inicio = sum(inicio)
 bysort ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
 
+
+
+** Generar tasa de positividad
+
+gen posi = positivo/muestra
+gen posi_rapida = positivo_rapida/muestra_rapida
+gen posi_molecular = positivo_molecular/muestra_molecular
+
+
+
+
 * Exportar a CSV
 sort ubigeo fecha
 export delimited using "${main}/data_distrital.csv", replace
@@ -156,7 +168,7 @@ export delimited using "${main}/data_distrital.csv", replace
 **** Exportar en formato wide
 drop provincia_ubigeo departamento_ubigeo provincia distrito departamento total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida
 
-reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado, i(fecha) j(ubigeo) string
+reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(ubigeo) string
 
 tsset fecha
 tsfill
@@ -214,6 +226,14 @@ bysort provincia_ubigeo: gen total_inicio = sum(inicio)
 bysort provincia_ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort provincia_ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
 
+
+** Generar tasa de positividad
+
+gen posi = positivo/muestra
+gen posi_rapida = positivo_rapida/muestra_rapida
+gen posi_molecular = positivo_molecular/muestra_molecular
+
+
 * Exportar a CSV
 export delimited using "${main}/data_provincial.csv", replace
 
@@ -222,7 +242,7 @@ replace provincia = subinstr(provincia, " ", "", .)
 
 drop provincia_ubigeo total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida
 
-reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado, i(fecha) j(provincia) string
+reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(provincia) string
 
 tsset fecha
 tsfill
@@ -281,6 +301,15 @@ gen total_defunciones = sum(defunc)
 gen total_inicio = sum(inicio)
 gen total_inicio_molecular = sum(inicio_molecular)
 gen total_inicio_rapida = sum(inicio_rapida)
+
+
+
+** Generar tasa de positividad
+
+gen posi = positivo/muestra
+gen posi_rapida = positivo_rapida/muestra_rapida
+gen posi_molecular = positivo_molecular/muestra_molecular
+
 
 * Exportar a CSV
 export delimited using "${main}/data_regional.csv", replace

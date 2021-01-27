@@ -76,7 +76,7 @@ regional <- tabPanel(title = "Nivel Regional",
                   tabBox(title = h4(strong("Semáforo COVID")),
                     tabPanel("Casos",
                              tabsetPanel(
-                               tabPanel("Gráfico",dygraphOutput("dygraph_region_casos"),
+                               tabPanel("Gráfico",dygraphOutput("dygraph_region_positividad"),
                                         h4(strong("Descripción de los ejes")),
                                         p(div(strong("Eje Y: "), em("Casos positivos acumulados por COVID-19 en la Región Cusco."), style = "color:blue")),
                                         p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
