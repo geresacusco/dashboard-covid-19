@@ -275,7 +275,7 @@ shinyServer(function(input, output, session){
   })
   
   ## Positividad
-  output$dygraph_region_positividad <- renderDygraph({
+  output$dygraph_region_positividad_molecular <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, posi_molecular)]) %>%
       dySeries("posi_molecular", label = "Promedio de 7 dias") %>%
@@ -288,9 +288,9 @@ shinyServer(function(input, output, session){
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "6.965", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "6.965", to = "20.895", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "20.895", to = "27.86", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
     
   })
   
