@@ -13,6 +13,7 @@ provincial <- tabPanel(title = "Nivel Provincial",
                        tabBox(width = 12,
                          title = h4(strong("Semáforo COVID")),
                          id = "tab_semaforo_prov",
+                         tabPanel("Tasa de positividad molecular",dygraphOutput("dygraph_prov_positividad_molecular")),
                          tabPanel("Casos",dygraphOutput("dygraph_prov_new_cases")),
                          tabPanel("Defunciones",dygraphOutput("dygraph_prov_new_deaths")))
                      ),

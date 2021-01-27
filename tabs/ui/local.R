@@ -16,6 +16,7 @@ local <- tabPanel(title = "Nivel distrital",
                            title = h4(strong("Semáforo COVID")),
                            id = "tab_semaforo_dis",
                            tabPanel("Casos",dygraphOutput("dygraph_dis_new_cases")),
+                           tabPanel("Tasa de positividad molecular",dygraphOutput("dygraph_dis_positividad_molecular")),
                            tabPanel("Defunciones",dygraphOutput("dygraph_dis_new_deaths")))
                   ),
                   

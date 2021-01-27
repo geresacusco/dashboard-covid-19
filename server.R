@@ -274,7 +274,8 @@ shinyServer(function(input, output, session){
     
   })
   
-  ## Positividad
+  ## Positividad molecular
+  
   output$dygraph_region_positividad_molecular <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, posi_molecular)]) %>%
@@ -676,6 +677,30 @@ shinyServer(function(input, output, session){
       dyShading(from = data_semaforo_subset()[, .(deaths_q2)], to = data_semaforo_subset()[, .(deaths_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
   })  
   
+  ## Semaforo provincial, positividad molecular
+
+  output$dygraph_prov_positividad_molecular <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_prov_subset()[, .(fecha, posi_molecular)],
+            main = input$prov) %>%
+      dySeries("posi_molecular", label = "Promedio de 7 dias") %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+  })  
   
   ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
   output$plot3_prov <- renderDygraph({
@@ -844,6 +869,30 @@ shinyServer(function(input, output, session){
       dyShading(from = data_semaforo_dis_subset()[, .(deaths_q2)], to = data_semaforo_dis_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y")
   })  
   
+  
+  ## Semaforo distrital: Positividad molecular
+  
+  output$dygraph_dis_positividad_molecular <- renderDygraph({
+    
+    shiny::req(input$dis)
+    
+    dygraph(data_dis_subset()[, .(fecha, posi_molecular)],
+            main = input$prov) %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                drawPoints = FALSE, pointSize = 3,
+                pointShape = "circle",
+                colors = c("#003169")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+  })  
   
   ## 3)  Codigo gráfico 3 a nivel DISTRITAL (Paquete Dygraph)
   
