@@ -1,31 +1,18 @@
 shinyServer(function(input, output, session){
-  ######################################## Data de github
-
-  # # Leer data para el bubble plot
-  # data_raw <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
-
-  # #  Leer data para Gráfico 2
-  # data2_1 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/Cusco_data.csv")
-  # data2_2 <- fread("https://raw.githubusercontent.com/branmora/diresacusco/main/provincial-incidencia-densidad-8-12.csv")
-  
   #################################################### Set up loading screen ----
-  
   Sys.sleep(3) # plots
   waiter_hide()
   
   #################################################### Leer data ----
-  
-  # Leer data
   source("01_scripts/read_data.R")
   
-  
   # Leer data para bubble plot (experimental)
-  
-  data_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_provincial.csv", keepLeadingZeros = TRUE)
-  data_prov$fecha <- as.Date(data_prov$fecha)
-  data_prov <- subset(data_prov, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
-  
-  data_densidad <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/densidad/densidad_provincia.csv")
+  # data_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_provincial.csv", keepLeadingZeros = TRUE)
+  # data_prov$fecha <- as.Date(data_prov$fecha)
+  # data_prov <- subset(data_prov, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
+  # data_densidad_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/densidad/densidad_provincia.csv")
+  # bubble_data <- merge(data_prov, data_densidad_prov, by = "provincia")
+  # bubble_data <- mutate(bubble_data, incidencia = total_positivo/poblacion )
   
   #################################################### Hacer data reactiva y subset por provincia y distrito ----
   
@@ -171,6 +158,7 @@ shinyServer(function(input, output, session){
     rgb(3, 4, 94, maxColorValue = 255))
   print(myPal5)
   
+  
   ######################################## Código de gráficos ----
   
   ### 1) Código para graficar el semáforo COVID ----
@@ -302,7 +290,7 @@ shinyServer(function(input, output, session){
   
   
   
-  # 2) Código para graficar el mapa del cusco ----
+  ### 2) Código para graficar el mapa del cusco ----
   
   # Casos totales
   
@@ -431,38 +419,36 @@ shinyServer(function(input, output, session){
       hc_chart(marginBottom  = 100)
   })
         
-  # 3) Código para graficar el bubble plot ----
+  ### 3) Código para graficar el bubble plot ----
   
-  # data_raw$Fecha <- as.Date(data_raw$Fecha, "%d/%m/%Y")
+  # datacusco_str <- distinct(bubble_data, provincia, .keep_all = TRUE) %>%
+  #   mutate(x = densidad_poblacional, y = incidencia, z = poblacion)
   # 
-  # datacusco_str <- distinct(data_raw, Distrito, .keep_all = TRUE) %>% 
-  #   mutate(x = Densidad, y = Incidencia, z = Poblacion) 
-  # 
-  # datacusco_seq <- data_raw %>% 
-  #   arrange(Distrito, Fecha) %>% 
-  #   group_by(Distrito) %>% 
-  #   do(sequence = list_parse(select(., x = Densidad, y = Incidencia, z = Poblacion)))
+  # datacusco_seq <- bubble_data %>%
+  #   arrange(provincia, fecha) %>%
+  #   group_by(provincia) %>%
+  #   do(sequence = list_parse(select(., x = densidad_poblacional, y = incidencia, z = poblacion)))
   # 
   # 
-  # data_cusco <- left_join(datacusco_str, datacusco_seq) 
+  # data_cusco <- left_join(datacusco_str, datacusco_seq)
   # 
-  # # summarise_if(data_raw, is.numeric, funs(min, max)) %>% 
-  # #   tidyr::gather(key, value) %>% 
+  # # summarise_if(data_raw, is.numeric, funs(min, max)) %>%
+  # #   tidyr::gather(key, value) %>%
   # #   arrange(key)
   # 
-  # output$bubble1 <- renderHighchart ({  
-  # highchart() %>% 
+  # output$bubble1 <- renderHighchart ({
+  # highchart() %>%
   #   hc_add_series(data_cusco, type = "bubble",
-  #                 minSize = 0, maxSize = 30) %>% 
-  #   hc_motion(enabled = TRUE, series = 0, labels = unique(data_raw$Fecha),
-  #             loop = TRUE, autoPlay = TRUE, 
-  #             updateInterval = 1000, magnet = list(step =  20)) %>% 
-  #   hc_plotOptions(series = list(showInLegend = FALSE)) %>% 
-  #   hc_xAxis(type = "logarithmic", min = 12, max = 15000) %>% 
-  #   hc_yAxis(min = 0, max = 129.6) %>% 
+  #                 minSize = 0, maxSize = 30) %>%
+  #   hc_motion(enabled = TRUE, series = 0, labels = unique(bubble_data$fecha),
+  #             loop = TRUE, autoPlay = TRUE,
+  #             updateInterval = 50, magnet = list(step =  0.1)) %>%
+  #   hc_plotOptions(series = list(showInLegend = FALSE)) %>%
+  #   hc_xAxis(type = "logarithmic", min = 12, max = 1000) %>%
+  #   hc_yAxis(min = 0, max = 0.15) %>%
   #   hc_add_theme(hc_theme_smpl())
   # })
-  
+
   
   ## 3)  Codigo gráfico 3 (Paquete Dygraph)
   
