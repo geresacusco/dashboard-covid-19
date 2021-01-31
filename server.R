@@ -18,6 +18,15 @@ shinyServer(function(input, output, session){
   # Leer data
   source("01_scripts/read_data.R")
   
+  
+  # Leer data para bubble plot (experimental)
+  
+  data_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_provincial.csv", keepLeadingZeros = TRUE)
+  data_prov$fecha <- as.Date(data_prov$fecha)
+  data_prov <- subset(data_prov, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
+  
+  data_densidad <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/densidad/densidad_provincia.csv")
+  
   #################################################### Hacer data reactiva y subset por provincia y distrito ----
   
   ### Make data reactive ----
