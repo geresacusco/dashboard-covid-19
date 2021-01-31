@@ -186,10 +186,6 @@ shinyServer(function(input, output, session){
     
   })
   
-  
-  # dyLegend(width = 380, showZeroValues = TRUE, labelsDiv = "legend_plot3",
-  #          labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
-  
   ## Defunciones
   output$dygraph_region_defunciones <- renderDygraph({
     
