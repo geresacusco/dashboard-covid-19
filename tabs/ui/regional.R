@@ -100,7 +100,7 @@ otros colores. En todo momento se deberían tomar en cuenta las medidas de segur
                       
                     tabPanel("Casos",
                              tabsetPanel(
-                               tabPanel("Gráfico",dygraphOutput("dygraph_region_positivo"),
+                               tabPanel("Gráfico",dygraphOutput("dygraph_region_casos"),
                                         h4(strong("Descripción de los ejes")),
                                         p(div(strong("Eje Y: "), em("Casos positivos acumulados por COVID-19 en la Región Cusco."), style = "color:blue")),
                                         p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
