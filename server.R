@@ -154,6 +154,13 @@ shinyServer(function(input, output, session){
     rgb(3, 4, 94, maxColorValue = 255))
   print(myPal3)
   
+  myPal4 <- c(
+    rgb(255, 134, 0, maxColorValue = 255),
+    rgb(251, 54, 64, maxColorValue = 255),
+    rgb(3, 4, 94, maxColorValue = 255),
+    rgb(115, 113, 252, maxColorValue = 255))
+  print(myPal4)
+  
   myPal5 <- c(
     rgb(255, 134, 0, maxColorValue = 255),
     rgb(251, 54, 64, maxColorValue = 255),
@@ -758,7 +765,7 @@ shinyServer(function(input, output, session){
                 ")
       ) %>%
       dyRangeSelector() %>%
-        dyOptions(colors = myPal3)
+        dyOptions(colors = myPal5)
   })
     
   ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
@@ -815,7 +822,7 @@ shinyServer(function(input, output, session){
                 ")
       ) %>%
       dyRangeSelector() %>%
-      dyOptions(colors = myPal1)
+      dyOptions(colors = myPal2)
   })
   
   
@@ -951,7 +958,7 @@ shinyServer(function(input, output, session){
                 ")
       ) %>%
       dyRangeSelector() %>%
-      dyOptions(colors = myPal3)
+      dyOptions(colors = myPal5)
   })
   
   
@@ -1010,7 +1017,7 @@ shinyServer(function(input, output, session){
                 ")
       ) %>%
       dyRangeSelector() %>%
-      dyOptions(colors = myPal1)
+      dyOptions(colors = myPal2)
   })
   
   

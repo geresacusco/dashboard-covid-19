@@ -1,11 +1,11 @@
 regional <- tabPanel(title = "Nivel Regional", 
                  value = "regional",
                  br(),
-                 HTML("<h1><center>Análisis de la pandemia por COVID-19</center></h1>"),
+                 HTML("<h1><center>Análisis de la Pandemia por COVID-19</center></h1>"),
                  column(width = 12,
                         br(), br(),
                         wellPanel(
-                HTML("La sala situacional busca mostrar, de forma clara y directa,
+                HTML("El Análisis de la Pandemia por COVID-19 muestra, de forma clara y directa,
                           información relevante sobre la situación COVID en la region Cusco,
                           para esto se presentan gráficos interactivos a nivel regional,
                           provincial y distrital.</h4>")
@@ -13,9 +13,9 @@ regional <- tabPanel(title = "Nivel Regional",
                         br(),
                    fluidRow(
                    box(width = 12, 
-                   valueBox("4,511", "Casos totales 2021", icon = icon("virus", "fa-2x")),
-                   valueBox("28,925", "Pruebas procesadas 2021 (moleculares y rapidas)", icon = icon("vial", "fa-2x")),
-                   valueBox("131", "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
+                   valueBox(h2(strong("4,511")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
+                   valueBox(h2(strong("28,925")), "Pruebas procesadas 2021 (moleculares y rapidas)", icon = icon("vial", "fa-2x")),
+                   valueBox(h2(strong("131")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
                  ),
 
 
@@ -86,13 +86,13 @@ regional <- tabPanel(title = "Nivel Regional",
                                     tabPanel("Resumen", "El semáforo COVID-19 de casos muestra
                                el nivel de riesgo respecto al número total de contagiados
                                por COVID-19.", br(), br(),
-                                             p("El color rojo representa un nivel elevado de riesgo, en esta zona
+                                             p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
 las precauciones aumentan. En esta zona el nivel y velocidad de contagio es mucho más elevada.
 Se recomienda salir de casa solo en casos excepcionales y tomando muy en cuenta las medidas
 de seguridad sanitaria. ", br(), br(),
-                                               "El color amarillo representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
+                                               "El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
 actividades, siempre tomando en consideración las medidas de seguridad sanitaria.", br(), br(),
-                                               "El color verde representa que el nivel de riesgo no es tan elevado respecto a los
+                                               "El color", strong("verde"), "representa que el nivel de riesgo no es tan elevado respecto a los
 otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
 "))
                                   )),
@@ -108,13 +108,13 @@ otros colores. En todo momento se deberían tomar en cuenta las medidas de segur
                                tabPanel("Resumen", "El semáforo COVID-19 de casos muestra
                                el nivel de riesgo respecto al número total de contagiados
                                por COVID-19.", br(), br(),
-                                        p("El color rojo representa un nivel elevado de riesgo, en esta zona
+                                        p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
 las precauciones aumentan. En esta zona el nivel y velocidad de contagio es mucho más elevada.
 Se recomienda salir de casa solo en casos excepcionales y tomando muy en cuenta las medidas
 de seguridad sanitaria. ", br(), br(),
-"El color amarillo representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
+"El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
 actividades, siempre tomando en consideración las medidas de seguridad sanitaria.", br(), br(),
-"El color verde representa que el nivel de riesgo no es tan elevado respecto a los
+"El color", strong("verde"), "representa que el nivel de riesgo no es tan elevado respecto a los
 otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
 "))
                              )),
@@ -127,13 +127,13 @@ otros colores. En todo momento se deberían tomar en cuenta las medidas de segur
                                           el primer caso confirmado por COVID-19 en la región.")),
                                tabPanel("Resumen","El semáforo COVID-19 de defunciones muestra
                                el nivel de riesgo respecto al número total de fallecidos por COVID-19.", br(), br(),
-"El color rojo representa un nivel elevado de riesgo, en esta zona las precauciones aumentan. Hay una
+"El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona las precauciones aumentan. Hay una
 alerta máxima por las defunciones que se presentan día a día. En todo tiempo deberíamos no exponernos
 al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.", br(), br(),
-"El color amarillo representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, la alerta no es máxima debido a
+"El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, la alerta no es máxima debido a
 que el número de defunciones por día ha bajado respecto al color rojo. En todo tiempo deberíamos no
 exponernos al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.", br(), br(),
-"El color verde representa que el nivel de riesgo es bajo, la alerta por número de defunciones está
+"El color", strong("verde"), "representa que el nivel de riesgo es bajo, la alerta por número de defunciones está
 presente, pero no es tan elevada respecto a los otros colores. En todo tiempo deberíamos no
 exponernos al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.
 ")
@@ -147,16 +147,16 @@ exponernos al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.
                                tabPanel("Resumen", "El semáforo COVID-19 de camas muestra
                                el nivel de riesgo respecto al número total de camas UCI,
                                NO UCI y camas de Nivel II por COVID-19.", br(), br(),
-"El color rojo representa un nivel elevado de riesgo, en esta zona las camas se ocupan
+"El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona las camas se ocupan
 por sobre el 60%. Hay una alerta máxima por el uso de las mismas en el día a día.
 En todo tiempo deberíamos no exponernos al COVID-19, necesitamos cuidarnos y
 cuidar a los nuestros.", br(), br(),
-"El color amarillo representa un nivel de riesgo moderado, en esta zona las camas se ocupan
+"El color", strong("amarillo"), "representa un nivel de riesgo moderado, en esta zona las camas se ocupan
 entre el 30 y 60%. Aunque el riesgo aún se mantiene, la alerta no es
 máxima debido a que el número de camas por día ha bajado respecto al color rojo.
 En todo tiempo deberíamos no exponernos al COVID-19,
 necesitamos cuidarnos y cuidar a los nuestros.", br(), br(),
-"El color verde representa un nivel de riesgo bajo, la alerta por número de
+"El color", strong("verde"), "representa un nivel de riesgo bajo, la alerta por número de
 camas usadas para COVID-19 está presente, pero no es tan elevada respecto a los
 otros colores, a saber, el uso de estas se encuentra por debajo del 30%. En todo tiempo deberíamos no
 exponernos al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.
