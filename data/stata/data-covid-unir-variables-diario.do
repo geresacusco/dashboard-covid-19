@@ -163,16 +163,16 @@ xtset dis fecha
 bysort dis: gen dias = _n
 
 ** Total positivo
-gen primera_ola_positivo = F90.positivo
-gen segunda_ola_positivo = F180.positivo
+gen primera_ola_positivo = 195.positivo
+gen segunda_ola_positivo = F272.positivo
 
 ** Defunciones
-gen primera_ola_defunciones = F90.defunciones
-gen segunda_ola_defunciones = F180.defunciones
+gen primera_ola_defunciones = F219.defunciones
+gen segunda_ola_defunciones = F310.defunciones
 
 ** Tasa de positividad molecular
-gen primera_ola_tasamolecular = F100.posi_molecular
-gen segunda_ola_tasamolecular = F200.posi_molecular
+gen primera_ola_tasamolecular = F188.posi_molecular
+gen segunda_ola_tasamolecular = F286.posi_molecular
 
 * Exportar a CSV
 sort ubigeo fecha
@@ -254,17 +254,16 @@ xtset prov fecha
 bysort prov: gen dias = _n
 
 ** Total positivo
-gen primera_ola_positivo = F90.positivo
-gen segunda_ola_positivo = F180.positivo
+gen primera_ola_positivo = 195.positivo
+gen segunda_ola_positivo = F272.positivo
 
 ** Defunciones
-gen primera_ola_defunciones = F90.defunciones
-gen segunda_ola_defunciones = F180.defunciones
+gen primera_ola_defunciones = F219.defunciones
+gen segunda_ola_defunciones = F310.defunciones
 
 ** Tasa de positividad molecular
-gen primera_ola_tasamolecular = F100.posi_molecular
-gen segunda_ola_tasamolecular = F200.posi_molecular
-
+gen primera_ola_tasamolecular = F188.posi_molecular
+gen segunda_ola_tasamolecular = F286.posi_molecular
 
 
 * Exportar a CSV
@@ -347,17 +346,16 @@ tsset fecha
 gen dias = _n
 
 ** Total positivo
-gen primera_ola_positivo = F90.positivo
-gen segunda_ola_positivo = F180.positivo
+gen primera_ola_positivo = 195.positivo
+gen segunda_ola_positivo = F272.positivo
 
 ** Defunciones
-gen primera_ola_defunciones = F90.defunciones
-gen segunda_ola_defunciones = F180.defunciones
+gen primera_ola_defunciones = F219.defunciones
+gen segunda_ola_defunciones = F310.defunciones
 
 ** Tasa de positividad molecular
-gen primera_ola_tasamolecular = F100.posi_molecular
-gen segunda_ola_tasamolecular = F200.posi_molecular
-
+gen primera_ola_tasamolecular = F188.posi_molecular
+gen segunda_ola_tasamolecular = F286.posi_molecular
 
 * Exportar a CSV
 export delimited using "${main}/data_regional.csv", replace
