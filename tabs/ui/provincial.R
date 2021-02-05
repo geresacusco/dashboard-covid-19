@@ -15,7 +15,10 @@ provincial <- tabPanel(title = "Nivel Provincial",
                          id = "tab_semaforo_prov",
                          tabPanel("Tasa de positividad molecular",dygraphOutput("dygraph_prov_positividad_molecular")),
                          tabPanel("Casos",dygraphOutput("dygraph_prov_new_cases")),
-                         tabPanel("Defunciones",dygraphOutput("dygraph_prov_new_deaths")))
+                         tabPanel("Defunciones",dygraphOutput("dygraph_prov_new_deaths")),
+                         tabPanel("Comparativo Casos",dygraphOutput("dygraph_prov_comparativo_casos")),
+                         tabPanel("Comparativo Defunciones",dygraphOutput("dygraph_prov_comparativo_defunciones")),
+                         tabPanel("Comparativo Positividad Molecular",dygraphOutput("dygraph_prov_comparativo_posimolecular")))
                      ),
                      
                      fluidRow(
