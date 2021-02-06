@@ -17,7 +17,10 @@ local <- tabPanel(title = "Nivel distrital",
                            id = "tab_semaforo_dis",
                            tabPanel("Casos",dygraphOutput("dygraph_dis_new_cases")),
                            tabPanel("Tasa de positividad molecular",dygraphOutput("dygraph_dis_positividad_molecular")),
-                           tabPanel("Defunciones",dygraphOutput("dygraph_dis_new_deaths")))
+                           tabPanel("Defunciones",dygraphOutput("dygraph_dis_new_deaths")),
+                           tabPanel("Comparativo Casos",dygraphOutput("dygraph_dis_comparativo_casos")),
+                           tabPanel("Comparativo Defunciones",dygraphOutput("dygraph_dis_comparativo_defunciones")),
+                           tabPanel("Comparativo Positividad Molecular",dygraphOutput("dygraph_dis_comparativo_posimolecular")))
                   ),
                   
                   fluidRow(

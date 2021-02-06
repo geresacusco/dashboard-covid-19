@@ -150,23 +150,36 @@ bysort ubigeo: gen total_inicio = sum(inicio)
 bysort ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
 
-
-
 ** Generar tasa de positividad
 
 gen posi = positivo/muestra
 gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
 
+*** Generar primera y segunda ola para variables de interés
+encode distrito, gen(dis)
+xtset dis fecha 
 
+bysort dis: gen dias = _n
 
+** Total positivo
+gen primera_ola_positivo = F90.positivo
+gen segunda_ola_positivo = F180.positivo
+
+** Defunciones
+gen primera_ola_defunciones = F90.defunciones
+gen segunda_ola_defunciones = F180.defunciones
+
+** Tasa de positividad molecular
+gen primera_ola_tasamolecular = F100.posi_molecular
+gen segunda_ola_tasamolecular = F200.posi_molecular
 
 * Exportar a CSV
 sort ubigeo fecha
 export delimited using "${main}/data_distrital.csv", replace
 
 **** Exportar en formato wide
-drop provincia_ubigeo departamento_ubigeo provincia distrito departamento total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida
+drop provincia_ubigeo departamento_ubigeo provincia distrito departamento total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida dis dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
 
 reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(ubigeo) string
 
@@ -234,13 +247,33 @@ gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
 
 
+*** Generar primera y segunda ola para variables de interés
+encode provincia, gen(prov)
+xtset prov fecha 
+
+bysort prov: gen dias = _n
+
+** Total positivo
+gen primera_ola_positivo = F90.positivo
+gen segunda_ola_positivo = F180.positivo
+
+** Defunciones
+gen primera_ola_defunciones = F90.defunciones
+gen segunda_ola_defunciones = F180.defunciones
+
+** Tasa de positividad molecular
+gen primera_ola_tasamolecular = F100.posi_molecular
+gen segunda_ola_tasamolecular = F200.posi_molecular
+
+
+
 * Exportar a CSV
 export delimited using "${main}/data_provincial.csv", replace
 
 **** Exportar en formato wide
 replace provincia = subinstr(provincia, " ", "", .)
 
-drop provincia_ubigeo total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida
+drop provincia_ubigeo total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida prov dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
 
 reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(provincia) string
 
@@ -302,13 +335,28 @@ gen total_inicio = sum(inicio)
 gen total_inicio_molecular = sum(inicio_molecular)
 gen total_inicio_rapida = sum(inicio_rapida)
 
-
-
 ** Generar tasa de positividad
 
 gen posi = positivo/muestra
 gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
+
+*** Generar primera y segunda ola para variables de interés
+tsset fecha 
+
+gen dias = _n
+
+** Total positivo
+gen primera_ola_positivo = F90.positivo
+gen segunda_ola_positivo = F180.positivo
+
+** Defunciones
+gen primera_ola_defunciones = F90.defunciones
+gen segunda_ola_defunciones = F180.defunciones
+
+** Tasa de positividad molecular
+gen primera_ola_tasamolecular = F100.posi_molecular
+gen segunda_ola_tasamolecular = F200.posi_molecular
 
 
 * Exportar a CSV
