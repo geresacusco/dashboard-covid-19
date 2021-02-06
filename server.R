@@ -1175,5 +1175,31 @@ shinyServer(function(input, output, session){
   })
   
   
+  # Reporte en R markdown
+  
+  output$reporte <- downloadHandler(
+    filename = "reporte.pdf",
+    content = function(file) {
+      tempReport <- file.path(tempdir(), "reporte.Rmd")
+      file.copy("reporte.Rmd", tempReport, overwrite = TRUE)
+      
+      params <- list()
+      
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
   
 })
