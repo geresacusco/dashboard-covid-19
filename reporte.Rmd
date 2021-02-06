@@ -1,0 +1,50 @@
+---
+title: "Reporte Sala Situacional GERESA Cusco"
+output: pdf_document
+params:
+  'FALSE': NA
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# The `params` object is available in the document.
+params$n
+
+library(tidyverse)
+library(data.table)
+library(dygraphs)
+library(htmlwidgets)
+#devtools::install_github("rstudio/webshot2", force=TRUE)
+library(webshot2)
+#webshot::install_phantomjs()
+
+read_data_dpto <- function() {
+  data_dpto <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_regional.csv", keepLeadingZeros = TRUE)
+  data_dpto$fecha <- as.Date(data_dpto$fecha)
+  data_dpto <- subset(data_dpto, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
+  data_dpto <- mutate(data_dpto, xposi=log10(total_positivo), xini = log10(total_inicio))
+  return(data_dpto)
+}
+
+
+
+```
+
+A continuación, se puede visualizar el Semaforo COVID para casos:
+
+```{r screenshot.opts = list(delay = 0.5, cliprect = 'viewport'), echo=FALSE}
+
+dygraph(read_data_dpto()[, .(fecha, positivo)]) %>%
+      dySeries("positivo", label = "Promedio de 7 dias") %>%
+      # dyAxis("y", label = "Cases") %>%
+      dyRangeSelector(fillColor = "#003169", strokeColor = "#00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#003169", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "372.85", color = "#74C7B8", axis = "y") %>%
+      dyShading(from = "372.85", to = "1118.355", color = "#FFCDA3", axis = "y") %>%
+      dyShading(from = "1118.355", to = "1491.14", color = "#EF4F4F", axis = "y")
+
+```

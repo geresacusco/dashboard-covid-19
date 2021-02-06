@@ -1,0 +1,12 @@
+name: dashboard-covid-19-test
+title: dashboard-covid-19-test
+username:
+account: geresacusco
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3592105
+bundleId: 4187647
+url: https://geresacusco.shinyapps.io/dashboard-covid-19-test/
+when: 1612586951.00791
+asMultiple: FALSE
+asStatic: FALSE
