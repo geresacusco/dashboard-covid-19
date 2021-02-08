@@ -170,12 +170,18 @@ shinyServer(function(input, output, session){
   
   ### 1) Código para graficar el semáforo COVID ----
   
+  
+valueFormatter_cases = "function(y) {
+    return 'yvf(' + y.toPrecision(1) + ')';
+                                        }"
+  
+  
   ## Casos
   output$dygraph_region_casos <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, positivo)]) %>%
       dySeries("positivo", label = "Promedio de 7 dias") %>%
-      # dyAxis("y", label = "Cases") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_cases) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
