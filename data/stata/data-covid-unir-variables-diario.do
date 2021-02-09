@@ -9,8 +9,8 @@
 
 * Definir el directorio de trabajo actual
 
-global path "/Users/bran/Documents/GitHub/dashboard-covid-19/data"
-*global path "C:\Users\SARA\OneDrive\GORE\COMANDO COVID\6. TABLERO DE MANDO\dashboard-covid-19\data"
+*global path "/Users/bran/Documents/GitHub/dashboard-covid-19/data"
+global path "C:\Users\SARA\OneDrive\GORE\COMANDO COVID\6. TABLERO DE MANDO\dashboard-covid-19\data"
 	global main "$path"
 	global stata "$path/stata"
 set more off, permanent
@@ -56,13 +56,16 @@ gen var_count = 1
 drop if fecha_resultado < 21986
 
 * 2.1 Casos positivos totales
-gen positivo = 1 if  positivo_molecular == 1 | positivo_rapida == 1
+gen positivo = 1 if  positivo_molecular == 1 | positivo_rapida == 1 | positivo_antigenica == 1
 
 * 2.2 Casos positivos prueba rapida
 replace positivo_rapida =. if positivo_rapida==0
 
 * 2.2 Casos positivos prueba molecular
 replace positivo_molecular =. if positivo_molecular==0
+
+* 2.3 Casos positivos prueba antigenica
+replace positivo_antigenica =. if positivo_antigenica==0
 
 * 2.4 Muestras totales
 gen muestra = var_count
@@ -108,7 +111,7 @@ save "`ind2'" // Guardar indicadores si fecha_inicio >= 21980
 ** 3.1 Exportar a nivel distrital
 use "`ind'"
 * Colapsar fecha resultado
-collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones, by(ubigeo fecha_resultado)
+collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) positivo positivo_rapida positivo_molecular positivo_antigenica muestra muestra_rapida muestra_molecular sintomaticos defunciones, by(ubigeo fecha_resultado)
 sort ubigeo fecha_resultado
 rename fecha_resultado fecha
 
