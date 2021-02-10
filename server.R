@@ -169,19 +169,20 @@ shinyServer(function(input, output, session){
   ######################################## Código de gráficos ----
   
   ### 1) Código para graficar el semáforo COVID ----
+
+  # Formato de legenda  
+ valueFormatter_rounded = "function(y) {
+    return y.toFixed(0) ;}"
   
-  
-valueFormatter_cases = "function(y) {
-    return 'yvf(' + y.toPrecision(1) + ')';
-                                        }"
-  
+ valueFormatter_percent = "function(y) {
+    return y.toFixed(0) + '%';}"
   
   ## Casos
   output$dygraph_region_casos <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, positivo)]) %>%
       dySeries("positivo", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_cases) ) %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -201,7 +202,7 @@ valueFormatter_cases = "function(y) {
     
     dygraph(data_dpto_r()[, .(fecha, defunciones)]) %>%
       dySeries("defunciones", label = "Promedio de 7 dias") %>%
-      # dyAxis("y", label = "Deaths") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#142850", strokeColor = "#222d32") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -284,9 +285,9 @@ valueFormatter_cases = "function(y) {
   
   output$dygraph_region_positividad_molecular <- renderDygraph({
     
-    dygraph(data_dpto_r()[, .(fecha, posi_molecular)]) %>%
-      dySeries("posi_molecular", label = "Promedio de 7 dias") %>%
-      # dyAxis("y", label = "Deaths") %>%
+    dygraph(data_dpto_r()[, .(fecha, posi_molecular_percent)]) %>%
+      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#142850", strokeColor = "#222d32") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -295,9 +296,9 @@ valueFormatter_cases = "function(y) {
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
     
   })
   
@@ -641,8 +642,9 @@ valueFormatter_cases = "function(y) {
     
     shiny::req(input$prov)
     
-    dygraph(data_prov_subset()[, .(fecha, positivo)],
-            main = input$prov) %>%
+    dygraph(data_prov_subset()[, .(fecha, positivo)], main = input$prov) %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("positivo", label = "Promedio de 7 dias") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -665,7 +667,8 @@ valueFormatter_cases = "function(y) {
     
     dygraph(data_prov_subset()[, .(fecha, defunciones)],
             main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("defunciones", label = "Promedio de 7 dias") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -687,10 +690,10 @@ valueFormatter_cases = "function(y) {
     
     shiny::req(input$prov)
     
-    dygraph(data_prov_subset()[, .(fecha, posi_molecular)],
+    dygraph(data_prov_subset()[, .(fecha, posi_molecular_percent)],
             main = input$prov) %>%
-      dySeries("posi_molecular", label = "Promedio de 7 dias") %>%
-      # dyAxis("y", label = "Cases") %>%
+      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -701,9 +704,9 @@ valueFormatter_cases = "function(y) {
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
   })  
   
   
@@ -919,6 +922,8 @@ valueFormatter_cases = "function(y) {
             main = input$prov) %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
+      dySeries("positivo", label = "Promedio de 7 dias") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
                 fillGraph = FALSE, fillAlpha = 0.4,
                 drawPoints = FALSE, pointSize = 3,
@@ -940,9 +945,11 @@ valueFormatter_cases = "function(y) {
     
     dygraph(data_dis_subset()[, .(fecha, defunciones)],
             main = input$dis) %>%
-      # dyAxis("y", label = "Cases") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("defunciones", label = "Promedio de 7 dias") %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
                 fillGraph = FALSE, fillAlpha = 0.4,
                 drawPoints = FALSE, pointSize = 3,
@@ -962,9 +969,10 @@ valueFormatter_cases = "function(y) {
     
     shiny::req(input$dis)
     
-    dygraph(data_dis_subset()[, .(fecha, posi_molecular)],
+    dygraph(data_dis_subset()[, .(fecha, posi_molecular_percent)],
             main = input$dis) %>%
-      # dyAxis("y", label = "Cases") %>%
+      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
+      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -974,10 +982,10 @@ valueFormatter_cases = "function(y) {
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
   })  
   
   
