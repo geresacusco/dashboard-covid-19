@@ -11,7 +11,7 @@ regional <- tabPanel(title = "Nivel Regional",
                           provincial y distrital.</h4>")
                         ),
                         br(),
-                   downloadButton("reporte", "Generar reporte"),
+                   # downloadButton("reporte", "Generar reporte"),
                    fluidRow(
                    box(width = 12, 
                    valueBox(h2(strong("7,913")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
@@ -27,8 +27,7 @@ regional <- tabPanel(title = "Nivel Regional",
                              tabsetPanel(
                                tabPanel("Gráfico",highchartOutput("map_total_positivo")),
                                tabPanel("Resumen","Este mapa muestra el número de
-                                        casos positivos acumulados por", strong("pruebas:
-                                        molecular y rápida"), "para COVID-19 desde los
+                                        casos positivos acumulados por", strong("pruebas: molecular, rápida y antigénica"), ", esta útlima desde este 2021. Para COVID-19 desde los
                                         lugares menos afectados hacia los más afectados
                                         de la Región Cusco. El rango comprende los
                                         valores desde el primer día en que se reportó
@@ -76,18 +75,18 @@ regional <- tabPanel(title = "Nivel Regional",
                   tabBox(title = h4(strong("Semáforo COVID")),
                          
                          
-                         tabPanel("Positividad molecular",
+                         tabPanel("Tasa de positividad molecular",
                                   tabsetPanel(
-                                    tabPanel("Gráfico",dygraphOutput("dygraph_region_positividad_molecular"),
+                                    tabPanel("Gráfico", dygraphOutput("dygraph_region_positividad_molecular"),
                                              h4(strong("Descripción de los ejes")),
                                              p(div(strong("Eje Y: "), em("Tasa de positividad de pruebas moleculares (promedio de 7 días)."), style = "color:blue")),
                                              p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
                                           el primer caso confirmado por COVID-19 en la región.")),
-                                    tabPanel("Resumen", "El semáforo COVID-19 de casos muestra
-                               el nivel de riesgo respecto al número total de contagiados
+                                    tabPanel("Resumen", "El semáforo COVID-19 de tasa de positividad molecular muestra
+                               el nivel de riesgo respecto al número total de personas infectadas por muestras moleculares procesadas
                                por COVID-19.", br(), br(),
                                              p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
-las precauciones aumentan. En esta zona el nivel y velocidad de contagio es mucho más elevada.
+las precauciones aumentan. En esta zona el nivel y velocidad de contagio por muestras moleculares es mucho más elevada.
 Se recomienda salir de casa solo en casos excepcionales y tomando muy en cuenta las medidas
 de seguridad sanitaria. ", br(), br(),
                                                "El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más

@@ -707,85 +707,85 @@ valueFormatter_cases = "function(y) {
   })  
   
   
-  ## 3)  Semaforos comparativos (Paquete Dygraph)
-  
-  ## Casos
-  
-  output$dygraph_prov_comparativo_casos <- renderDygraph({
-    
-    shiny::req(input$prov)
-    
-    dygraph(data_prov_subset()[, .(dias, primera_ola_positivo, segunda_ola_positivo)],
-            main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_positivo", label = "Primera Ola") %>%
-      dySeries("segunda_ola_positivo", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = data_semaforo_subset()[, .(cases_q0)], to = data_semaforo_subset()[, .(cases_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = data_semaforo_subset()[, .(cases_q1)], to = data_semaforo_subset()[, .(cases_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = data_semaforo_subset()[, .(cases_q2)], to = data_semaforo_subset()[, .(cases_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
-  })  
-  
-  ## Defunciones
-  
-  output$dygraph_prov_comparativo_defunciones <- renderDygraph({
-    
-    shiny::req(input$prov)
-    
-    dygraph(data_prov_subset()[, .(dias, primera_ola_defunciones, segunda_ola_defunciones)],
-            main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_defunciones", label = "Primera Ola") %>%
-      dySeries("segunda_ola_defunciones", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = data_semaforo_subset()[, .(deaths_q0)], to = data_semaforo_subset()[, .(deaths_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = data_semaforo_subset()[, .(deaths_q1)], to = data_semaforo_subset()[, .(deaths_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = data_semaforo_subset()[, .(deaths_q2)], to = data_semaforo_subset()[, .(deaths_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
-  })  
-  
-  ## Tasa de positividad molecular
-  
-  output$dygraph_prov_comparativo_posimolecular <- renderDygraph({
-    
-    shiny::req(input$prov)
-    
-    dygraph(data_prov_subset()[, .(dias, primera_ola_tasamolecular, segunda_ola_tasamolecular)],
-            main = input$prov) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_tasamolecular", label = "Primera Ola") %>%
-      dySeries("segunda_ola_tasamolecular", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
-  })  
+  # ## 3)  Semaforos comparativos (Paquete Dygraph)
+  # 
+  # ## Casos
+  # 
+  # output$dygraph_prov_comparativo_casos <- renderDygraph({
+  #   
+  #   shiny::req(input$prov)
+  #   
+  #   dygraph(data_prov_subset()[, .(dias, primera_ola_positivo, segunda_ola_positivo)],
+  #           main = input$prov) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_positivo", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_positivo", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = data_semaforo_subset()[, .(cases_q0)], to = data_semaforo_subset()[, .(cases_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+  #     dyShading(from = data_semaforo_subset()[, .(cases_q1)], to = data_semaforo_subset()[, .(cases_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+  #     dyShading(from = data_semaforo_subset()[, .(cases_q2)], to = data_semaforo_subset()[, .(cases_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
+  # })  
+  # 
+  # ## Defunciones
+  # 
+  # output$dygraph_prov_comparativo_defunciones <- renderDygraph({
+  #   
+  #   shiny::req(input$prov)
+  #   
+  #   dygraph(data_prov_subset()[, .(dias, primera_ola_defunciones, segunda_ola_defunciones)],
+  #           main = input$prov) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_defunciones", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_defunciones", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = data_semaforo_subset()[, .(deaths_q0)], to = data_semaforo_subset()[, .(deaths_q1)], color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+  #     dyShading(from = data_semaforo_subset()[, .(deaths_q1)], to = data_semaforo_subset()[, .(deaths_q2)], color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+  #     dyShading(from = data_semaforo_subset()[, .(deaths_q2)], to = data_semaforo_subset()[, .(deaths_q3)], color = "rgb(239, 79, 79, 0.7)", axis = "y") 
+  # })  
+  # 
+  # ## Tasa de positividad molecular
+  # 
+  # output$dygraph_prov_comparativo_posimolecular <- renderDygraph({
+  #   
+  #   shiny::req(input$prov)
+  #   
+  #   dygraph(data_prov_subset()[, .(dias, primera_ola_tasamolecular, segunda_ola_tasamolecular)],
+  #           main = input$prov) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_tasamolecular", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_tasamolecular", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_prov_subset()[, max(dias) - 50], data_prov_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+  #     dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+  #     dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+  # })  
 
   
   ## 3)  Codigo gráfico 3 a nivel provincial (Paquete Dygraph)
@@ -793,11 +793,12 @@ valueFormatter_cases = "function(y) {
 
     shiny::req(input$prov)
     
-      dygraph(data_prov_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones)],) %>%
-        dySeries("total_positivo", label = "Positivos") %>%
-        dySeries("total_recuperado", label = "Recuperados") %>%
-        dySeries("total_sintomaticos", label = "Sintomáticos") %>%
-        dySeries("total_defunciones", label = "Defunciones") %>%
+      dygraph(data_prov_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones,total_inicio)],) %>%
+        dySeries("total_positivo", label = "Total de casos positivos") %>%
+        dySeries("total_recuperado", label = "Total de casos recuperados") %>%
+        dySeries("total_sintomaticos", label = "Total de casos sintomáticos") %>%
+        dySeries("total_inicio", label = "Total de casos por inicio de síntomas") %>%
+        dySeries("total_defunciones", label = "Total de defunciones") %>%
         dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                  labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
         dyCSS(textConnection("
@@ -848,61 +849,61 @@ valueFormatter_cases = "function(y) {
   })
     
   ## 3)  Codigo gráfico 4 a nivel provincial (Paquete Dygraph)
-  output$plot4_prov <- renderDygraph({
-    
-    shiny::req(input$prov)
-    
-    dygraph(data_prov_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
-      dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
-      dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
-      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
-               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
-      dyCSS(textConnection("
-                  .dygraph-legend {
-                  width: auto !important;
-                  min-width: 150px;
-                  color: #000445;
-                  background-color: rgb(250, 250, 250, 0.4) !important;
-                  padding-left:5px;
-                  border-color:#000445;
-                  border-style:solid;
-                  border-width:3px;
-                  transition:0s 2s;
-                  z-index: 80 !important;
-                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
-                  border-radius: 0px;
-                  }
-                  .dygraph-legend:hover{
-                  transform: translate(-110%);
-                  transition: 3s;
-                  }
-                
-                  .dygraph-legend > span {
-                    color: black;
-                    padding-left:5px;
-                    padding-right:2px;
-                    margin-left:-5px;
-                    background-color: rgb(250, 250, 250, 0.4) !important;
-                    display: block;
-                  }
-                
-                  .dygraph-legend > span:first-child {
-                    margin-top:2px;
-                  }
-
-                  .dygraph-legend > span > span{
-                    display: inline;
-                  }
-                  
-                  .highlight {
-                    border-left: 3px solid #000445;
-                    padding-left:3px !important;
-                  }
-                ")
-      ) %>%
-      dyRangeSelector() %>%
-      dyOptions(colors = myPal2)
-  })
+  # output$plot4_prov <- renderDygraph({
+  #   
+  #   shiny::req(input$prov)
+  #   
+  #   dygraph(data_prov_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
+  #     dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
+  #     dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+  #     dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+  #              labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+  #     dyCSS(textConnection("
+  #                 .dygraph-legend {
+  #                 width: auto !important;
+  #                 min-width: 150px;
+  #                 color: #000445;
+  #                 background-color: rgb(250, 250, 250, 0.4) !important;
+  #                 padding-left:5px;
+  #                 border-color:#000445;
+  #                 border-style:solid;
+  #                 border-width:3px;
+  #                 transition:0s 2s;
+  #                 z-index: 80 !important;
+  #                 box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+  #                 border-radius: 0px;
+  #                 }
+  #                 .dygraph-legend:hover{
+  #                 transform: translate(-110%);
+  #                 transition: 3s;
+  #                 }
+  #               
+  #                 .dygraph-legend > span {
+  #                   color: black;
+  #                   padding-left:5px;
+  #                   padding-right:2px;
+  #                   margin-left:-5px;
+  #                   background-color: rgb(250, 250, 250, 0.4) !important;
+  #                   display: block;
+  #                 }
+  #               
+  #                 .dygraph-legend > span:first-child {
+  #                   margin-top:2px;
+  #                 }
+  # 
+  #                 .dygraph-legend > span > span{
+  #                   display: inline;
+  #                 }
+  #                 
+  #                 .highlight {
+  #                   border-left: 3px solid #000445;
+  #                   padding-left:3px !important;
+  #                 }
+  #               ")
+  #     ) %>%
+  #     dyRangeSelector() %>%
+  #     dyOptions(colors = myPal2)
+  # })
   
   
   ############################ Código para graficar la data distrital ----
@@ -980,85 +981,85 @@ valueFormatter_cases = "function(y) {
   })  
   
   
-  ## 3)  Semaforos comparativos (Paquete Dygraph)
-
-  ## Casos
-  
-  output$dygraph_dis_comparativo_casos <- renderDygraph({
-    
-    shiny::req(input$dis)
-    
-    dygraph(data_dis_subset()[, .(dias, primera_ola_positivo, segunda_ola_positivo)],
-            main = input$dis) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_positivo", label = "Primera Ola") %>%
-      dySeries("segunda_ola_positivo", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(cases_q0)], to = data_semaforo_dis_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(cases_q1)], to = data_semaforo_dis_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(cases_q2)], to = data_semaforo_dis_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y")
-  })  
-  
-  ## Defunciones
-  
-  output$dygraph_dis_comparativo_defunciones <- renderDygraph({
-    
-    shiny::req(input$dis)
-    
-    dygraph(data_dis_subset()[, .(dias, primera_ola_defunciones, segunda_ola_defunciones)],
-            main = input$dis) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_defunciones", label = "Primera Ola") %>%
-      dySeries("segunda_ola_defunciones", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q0)], to = data_semaforo_dis_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q1)], to = data_semaforo_dis_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
-      dyShading(from = data_semaforo_dis_subset()[, .(deaths_q2)], to = data_semaforo_dis_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y")
-  })  
- 
-   ## Tasa de positividad molecular
-  
-  output$dygraph_dis_comparativo_posimolecular <- renderDygraph({
-    
-    shiny::req(input$dis)
-    
-    dygraph(data_dis_subset()[, .(dias, primera_ola_tasamolecular, segunda_ola_tasamolecular)],
-            main = input$dis) %>%
-      # dyAxis("y", label = "Cases") %>%
-      dySeries("primera_ola_tasamolecular", label = "Primera Ola") %>%
-      dySeries("segunda_ola_tasamolecular", label = "Segunda Ola") %>%
-      dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
-                      fillColor = "#003169", strokeColor = "00909e") %>%
-      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
-                fillGraph = FALSE, fillAlpha = 0.4,
-                drawPoints = FALSE, pointSize = 3,
-                pointShape = "circle",
-                colors = c("#03045e", "#3a0ca3")) %>%
-      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
-      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
-      dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
-  })  
+  # ## 3)  Semaforos comparativos (Paquete Dygraph)
+  # 
+  # ## Casos
+  # 
+  # output$dygraph_dis_comparativo_casos <- renderDygraph({
+  #   
+  #   shiny::req(input$dis)
+  #   
+  #   dygraph(data_dis_subset()[, .(dias, primera_ola_positivo, segunda_ola_positivo)],
+  #           main = input$dis) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_positivo", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_positivo", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(cases_q0)], to = data_semaforo_dis_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(cases_q1)], to = data_semaforo_dis_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(cases_q2)], to = data_semaforo_dis_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y")
+  # })  
+  # 
+  # ## Defunciones
+  # 
+  # output$dygraph_dis_comparativo_defunciones <- renderDygraph({
+  #   
+  #   shiny::req(input$dis)
+  #   
+  #   dygraph(data_dis_subset()[, .(dias, primera_ola_defunciones, segunda_ola_defunciones)],
+  #           main = input$dis) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_defunciones", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_defunciones", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(deaths_q0)], to = data_semaforo_dis_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(deaths_q1)], to = data_semaforo_dis_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
+  #     dyShading(from = data_semaforo_dis_subset()[, .(deaths_q2)], to = data_semaforo_dis_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y")
+  # })  
+  # 
+  #  ## Tasa de positividad molecular
+  # 
+  # output$dygraph_dis_comparativo_posimolecular <- renderDygraph({
+  #   
+  #   shiny::req(input$dis)
+  #   
+  #   dygraph(data_dis_subset()[, .(dias, primera_ola_tasamolecular, segunda_ola_tasamolecular)],
+  #           main = input$dis) %>%
+  #     # dyAxis("y", label = "Cases") %>%
+  #     dySeries("primera_ola_tasamolecular", label = "Primera Ola") %>%
+  #     dySeries("segunda_ola_tasamolecular", label = "Segunda Ola") %>%
+  #     dyRangeSelector(dateWindow = c(data_dis_subset()[, max(dias) - 50], data_dis_subset()[, max(dias) + 1]),
+  #                     fillColor = "#003169", strokeColor = "00909e") %>%
+  #     dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+  #               fillGraph = FALSE, fillAlpha = 0.4,
+  #               drawPoints = FALSE, pointSize = 3,
+  #               pointShape = "circle",
+  #               colors = c("#03045e", "#3a0ca3")) %>%
+  #     dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+  #     dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+  #     dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+  #     dyShading(from = "0", to = "0.15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+  #     dyShading(from = "0.15", to = "0.30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+  #     dyShading(from = "0.30", to = "0.74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+  # })  
   
   
   ## 3)  Codigo gráfico 3 a nivel DISTRITAL (Paquete Dygraph)
@@ -1067,11 +1068,12 @@ valueFormatter_cases = "function(y) {
     
     shiny::req(input$dis)
     
-    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones)],) %>%
-      dySeries("total_positivo", label = "Positivos") %>%
-      dySeries("total_recuperado", label = "Recuperados") %>%
-      dySeries("total_sintomaticos", label = "Sintomáticos") %>%
-      dySeries("total_defunciones", label = "Defunciones") %>%
+    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_recuperado, total_sintomaticos, total_defunciones, total_inicio)],) %>%
+      dySeries("total_positivo", label = "Total de casos positivos") %>%
+      dySeries("total_recuperado", label = "Total de casos recuperados") %>%
+      dySeries("total_sintomaticos", label = "Total de casos sintomáticos") %>% 
+      dySeries("total_inicio", label = "Total de casos por inicio de síntomas") %>%
+      dySeries("total_defunciones", label = "Total de defunciones") %>%
       dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
                labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
       dyCSS(textConnection("
@@ -1124,79 +1126,79 @@ valueFormatter_cases = "function(y) {
   
   ## 3)  Codigo gráfico 4 a nivel DISTRITAL (Paquete Dygraph)
   
-  output$plot4_dis <- renderDygraph({
-    
-    shiny::req(input$dis)
-    
-    dygraph(data_dis_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
-      dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
-      dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
-      dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
-               labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
-      dyCSS(textConnection("
-                  .dygraph-legend {
-                  width: 150 !important;
-                  min-width: 150px;
-                  color: #000445;
-                  background-color: rgb(250, 250, 250, 0.4) !important;
-                  padding-left:5px;
-                  border-color:#000445;
-                  border-style:solid;
-                  border-width:3px;
-                  transition:0s 2s;
-                  z-index: 80 !important;
-                  box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
-                  border-radius: 0px;
-                  }
-                  .dygraph-legend:hover{
-                  transform: translate(-50%);
-                  transition: 3s;
-                  }
-                
-                  .dygraph-legend > span {
-                    color: #000445;
-                    padding-left:3px;
-                    padding-right:3px;
-                    margin-left:-3px;
-                    background-color: rgb(250, 250, 250, 0.4) !important;
-                    display: block;
-                  }
-                
-                  .dygraph-legend > span:first-child {
-                    margin-top:3px;
-                  }
-
-                  .dygraph-legend > span > span{
-                    display: inline;
-                  }
-                  
-                  .highlight {
-                    border-left: 3px solid #000445;
-                    padding-left:3px !important;
-                  }
-                ")
-      ) %>%
-      dyRangeSelector() %>%
-      dyOptions(colors = myPal2)
-  })
+  # output$plot4_dis <- renderDygraph({
+  #   
+  #   shiny::req(input$dis)
+  #   
+  #   dygraph(data_dis_subset()[, .(fecha, total_positivo, total_inicio)],) %>%
+  #     dySeries("total_positivo", label = "Total de casos positivos por covid-19") %>%
+  #     dySeries("total_inicio", label = "Total de casos de inicio de síntomas por covid-19") %>%
+  #     dyLegend(show = "follow", showZeroValues = TRUE, labelsDiv = NULL,
+  #              labelsSeparateLines = FALSE, hideOnMouseOut = TRUE) %>%
+  #     dyCSS(textConnection("
+  #                 .dygraph-legend {
+  #                 width: 150 !important;
+  #                 min-width: 150px;
+  #                 color: #000445;
+  #                 background-color: rgb(250, 250, 250, 0.4) !important;
+  #                 padding-left:5px;
+  #                 border-color:#000445;
+  #                 border-style:solid;
+  #                 border-width:3px;
+  #                 transition:0s 2s;
+  #                 z-index: 80 !important;
+  #                 box-shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+  #                 border-radius: 0px;
+  #                 }
+  #                 .dygraph-legend:hover{
+  #                 transform: translate(-50%);
+  #                 transition: 3s;
+  #                 }
+  #               
+  #                 .dygraph-legend > span {
+  #                   color: #000445;
+  #                   padding-left:3px;
+  #                   padding-right:3px;
+  #                   margin-left:-3px;
+  #                   background-color: rgb(250, 250, 250, 0.4) !important;
+  #                   display: block;
+  #                 }
+  #               
+  #                 .dygraph-legend > span:first-child {
+  #                   margin-top:3px;
+  #                 }
+  # 
+  #                 .dygraph-legend > span > span{
+  #                   display: inline;
+  #                 }
+  #                 
+  #                 .highlight {
+  #                   border-left: 3px solid #000445;
+  #                   padding-left:3px !important;
+  #                 }
+  #               ")
+  #     ) %>%
+  #     dyRangeSelector() %>%
+  #     dyOptions(colors = myPal2)
+  # })
   
   
   # Reporte en R markdown
   
-  output$reporte <- downloadHandler(
-    filename = "reporte.pdf",
-    content = function(file) {
-      tempReport <- file.path(tempdir(), "reporte.Rmd")
-      file.copy("reporte.Rmd", tempReport, overwrite = TRUE)
-      
-      params <- list()
-      
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-      )
-    }
-  )
+  # output$reporte <- downloadHandler(
+  #   filename = "reporte.pdf",
+  #   content = function(file) {
+  #     tempReport <- file.path(tempdir(), "reporte.Rmd")
+  #     file.copy("reporte.Rmd", tempReport, overwrite = TRUE)
+  #     
+  #     params <- list()
+  #     
+  #     rmarkdown::render(tempReport, output_file = file,
+  #                       params = params,
+  #                       envir = new.env(parent = globalenv())
+  #     )
+  #   }
+  # )
   
   
   
