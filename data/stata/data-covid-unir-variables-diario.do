@@ -17,7 +17,6 @@ set more off, permanent
 
 ********************************************************************************
 
-
 *** 1. Pasos previos
 
 use "${stata}/data-covid-unir-variables-brandon.dta", clear
@@ -42,11 +41,9 @@ replace provincia_ubigeo = "9999" if provincia_ubigeo == ""
 replace departamento_ubigeo = "99" if departamento_ubigeo == ""
 format fecha_resultado fecha_inicio fecha_recuperado %tdCCYY-NN-DD
 
-
 ** Generar variable identificadora/de conteo
 *gen var_id = _n
 gen var_count = 1
-
 
 ********************************************************************************
 
@@ -74,15 +71,18 @@ gen muestra = var_count
 gen muestra_molecular = 1 if tipo_prueba == 1
 
 * 2.6 Muestras rápida por día
-gen muestra_rapida = 1 if tipo_prueba == 0
+gen muestra_rapida = 1 if tipo_prueba == 2
 
-* 2.7 Recuperados por día
+* 2.7 Muestras antigenicas por día
+gen muestra_antigenica = 1 if tipo_prueba == 3
+
+* 2.8 Recuperados por día
 gen recuperado = 1 if fecha_recuperado !=.
 
-* 2.8 Sintomáticos por día 
+* 2.9 Sintomáticos por día 
 gen sintomaticos = 1 if sintomatico == 1
 
-* 2.9 Defunciones 
+* 2.10 Defunciones 
 gen defunciones = 1 if defuncion == 1
 
 tempfile ind
@@ -91,15 +91,17 @@ save "`ind'" // Guardar indicadores si fecha_resultado < 21986
 *** Indicadores con fecha inicio
 keep if fecha_inicio >= 21980
 
-* 2.10 Inicio de síntoma
+* 2.11 Inicio de síntoma
 gen inicio = 1 if positivo == 1 & fecha_inicio !=.
 
-* 2.11 Inicio de síntoma molecular
+* 2.12 Inicio de síntoma molecular
 gen inicio_molecular = 1 if positivo_molecular == 1 & fecha_inicio !=.
 
-* 2.12 Inicio de síntoma prueba rápida
+* 2.13 Inicio de síntoma prueba rápida
 gen inicio_rapida = 1 if positivo_molecular == 1 & fecha_inicio !=.
 
+* 2.13 Inicio de síntoma prueba antigenica
+gen inicio_antigenica = 1 if positivo_antigenica == 1 & fecha_inicio !=.
 
 tempfile ind2
 save "`ind2'" // Guardar indicadores si fecha_inicio >= 21980
@@ -111,7 +113,7 @@ save "`ind2'" // Guardar indicadores si fecha_inicio >= 21980
 ** 3.1 Exportar a nivel distrital
 use "`ind'"
 * Colapsar fecha resultado
-collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) positivo positivo_rapida positivo_molecular positivo_antigenica muestra muestra_rapida muestra_molecular sintomaticos defunciones, by(ubigeo fecha_resultado)
+collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) positivo positivo_rapida positivo_molecular positivo_antigenica muestra muestra_rapida muestra_molecular muestra_antigenica sintomaticos defunciones, by(ubigeo fecha_resultado)
 sort ubigeo fecha_resultado
 rename fecha_resultado fecha
 
@@ -129,7 +131,7 @@ save "`dis_fecha_recuperado'"
 
 * Colapsar fecha_inicio
 use "`ind2'"
-collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) inicio inicio_molecular inicio_rapida, by(ubigeo fecha_inicio)
+collapse (first) provincia_ubigeo departamento_ubigeo distrito provincia departamento (count) inicio inicio_molecular inicio_rapida inicio_antigenica, by(ubigeo fecha_inicio)
 sort ubigeo fecha_inicio
 rename fecha_inicio fecha
 
@@ -145,21 +147,25 @@ sort ubigeo fecha
 bysort ubigeo: gen total_positivo = sum(positivo)
 bysort ubigeo: gen total_positivo_rapida = sum(positivo_rapida)
 bysort ubigeo: gen total_positivo_molecular = sum(positivo_molecular)
+bysort ubigeo: gen total_positivo_antigenica = sum(positivo_antigenica)
 bysort ubigeo: gen total_muestra = sum(muestra)
 bysort ubigeo: gen total_muestra_rapida = sum(muestra_rapida)
 bysort ubigeo: gen total_muestra_molecular = sum(muestra_molecular)
+bysort ubigeo: gen total_muestra_antigenica = sum(muestra_antigenica)
 bysort ubigeo: gen total_recuperado = sum(recuperado)
 bysort ubigeo: gen total_sintomaticos = sum(sintomaticos)
 bysort ubigeo: gen total_defunciones = sum(defunciones)
 bysort ubigeo: gen total_inicio = sum(inicio)
 bysort ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
+bysort ubigeo: gen total_inicio_antigenica = sum(inicio_antigenica)
 
 ** Generar tasa de positividad
 
 gen posi = positivo/muestra
 gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
+gen posi_antigenica = positivo_antigenica/muestra_antigenica
 
 *** Generar primera y segunda ola para variables de interés
 encode distrito, gen(dis)
@@ -184,14 +190,14 @@ sort ubigeo fecha
 export delimited using "${main}/data_distrital.csv", replace
 
 **** Exportar en formato wide
-drop provincia_ubigeo departamento_ubigeo provincia distrito departamento total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida dis dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
 
-reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(ubigeo) string
+*drop provincia_ubigeo departamento_ubigeo provincia distrito departamento total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida dis dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
 
-tsset fecha
-tsfill
+*reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(ubigeo) string
 
-export delimited using "${main}/data_distrital_wide.csv", replace
+*tsset fecha
+*tsfill
+*export delimited using "${main}/data_distrital_wide.csv", replace
 
 ********************************************************************************
 
@@ -199,7 +205,7 @@ export delimited using "${main}/data_distrital_wide.csv", replace
 
 *Colapsar fecha_resultado
 use "`ind'", clear
-collapse (first) provincia (count) positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones, by(fecha_resultado provincia_ubigeo)
+collapse (first) provincia (count) positivo positivo_rapida positivo_molecular positivo_antigenica muestra muestra_rapida muestra_molecular muestra_antigenica sintomaticos defunciones, by(fecha_resultado provincia_ubigeo)
 sort provincia_ubigeo fecha_resultado
 rename fecha_resultado fecha
 
@@ -217,7 +223,7 @@ save "`prov_fecha_recuperado'"
 
 *Colapsar fecha_inicio
 use "`ind2'"
-collapse (first) provincia (count) inicio inicio_molecular inicio_rapida, by(fecha_inicio provincia_ubigeo)
+collapse (first) provincia (count) inicio inicio_molecular inicio_rapida inicio_antigenica, by(fecha_inicio provincia_ubigeo)
 sort provincia_ubigeo fecha_inicio
 rename fecha_inicio fecha
 
@@ -234,23 +240,25 @@ sort provincia_ubigeo fecha
 bysort provincia_ubigeo : gen total_positivo = sum(positivo)
 bysort provincia_ubigeo : gen total_positivo_rapida = sum(positivo_rapida)
 bysort provincia_ubigeo : gen total_positivo_molecular = sum(positivo_molecular)
+bysort provincia_ubigeo : gen total_positivo_antigenica = sum(positivo_antigenica)
 bysort provincia_ubigeo : gen total_muestra = sum(muestra)
 bysort provincia_ubigeo : gen total_muestra_rapida = sum(muestra_rapida)
 bysort provincia_ubigeo : gen total_muestra_molecular = sum(muestra_molecular)
+bysort provincia_ubigeo : gen total_muestra_antigenica = sum(muestra_antigenica)
 bysort provincia_ubigeo : gen total_recuperado = sum(recuperado)
 bysort provincia_ubigeo : gen total_sintomaticos = sum(sintomaticos)
 bysort provincia_ubigeo : gen total_defunciones = sum(defunc)
 bysort provincia_ubigeo: gen total_inicio = sum(inicio)
 bysort provincia_ubigeo: gen total_inicio_molecular = sum(inicio_molecular)
 bysort provincia_ubigeo: gen total_inicio_rapida = sum(inicio_rapida)
-
+bysort provincia_ubigeo: gen total_inicio_antigenica = sum(inicio_antigenica)
 
 ** Generar tasa de positividad
 
 gen posi = positivo/muestra
 gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
-
+gen posi_antigenica = positivo_antigenica/muestra_antigenica
 
 *** Generar primera y segunda ola para variables de interés
 encode provincia, gen(prov)
@@ -275,17 +283,16 @@ gen segunda_ola_tasamolecular = F286.posi_molecular
 export delimited using "${main}/data_provincial.csv", replace
 
 **** Exportar en formato wide
-replace provincia = subinstr(provincia, " ", "", .)
+*replace provincia = subinstr(provincia, " ", "", .)
 
-drop provincia_ubigeo total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida prov dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
+*drop provincia_ubigeo total_positivo total_positivo_rapida total_positivo_molecular total_muestra total_muestra_rapida total_muestra_molecular total_recuperado total_sintomaticos total_defunciones total_inicio total_inicio_molecular total_inicio_rapida prov dias primera_ola_positivo segunda_ola_positivo primera_ola_defunciones segunda_ola_defunciones primera_ola_tasamolecular segunda_ola_tasamolecular
 
-reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(provincia) string
+*reshape wide positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones inicio inicio_molecular inicio_rapida recuperado posi posi_rapida posi_molecular, i(fecha) j(provincia) string
 
-tsset fecha
-tsfill
+*tsset fecha
+*tsfill
 
-export delimited using "${main}/data_provincial_wide.csv", replace
-
+*export delimited using "${main}/data_provincial_wide.csv", replace
 
 ********************************************************************************
 
@@ -293,7 +300,7 @@ export delimited using "${main}/data_provincial_wide.csv", replace
 
 *Colapsar  fecha_resultado
 use "`ind'", clear
-collapse (count) positivo positivo_rapida positivo_molecular muestra muestra_rapida muestra_molecular sintomaticos defunciones, by(fecha_resultado)
+collapse (count) positivo positivo_rapida positivo_molecular positivo_antigenica muestra muestra_rapida muestra_molecular muestra_antigenica sintomaticos defunciones, by(fecha_resultado)
 sort fecha_resultado
 rename fecha_resultado fecha
 
@@ -312,7 +319,7 @@ save "`dpto_fecha_recuperado'"
 
 *Colapsar fecha_inicio
 use "`ind2'"
-collapse (count) inicio inicio_molecular inicio_rapida, by(fecha_inicio)
+collapse (count) inicio inicio_molecular inicio_rapida inicio_antigenica, by(fecha_inicio)
 sort fecha_inicio
 rename fecha_inicio fecha
 
@@ -328,22 +335,26 @@ sort fecha
 * Generar cumulativos
 gen total_positivo = sum(positivo)
 gen total_positivo_rapida = sum(positivo_rapida)
-gen total_positivo_molecular = sum(positivo_molecular)
+gen total_positivo_molecular = sum(positivo_molecular) 
+gen total_positivo_antigenica = sum(positivo_antigenica) 
 gen total_muestra = sum(muestra)
 gen total_muestra_rapida = sum(muestra_rapida)
 gen total_muestra_molecular = sum(muestra_molecular)
+gen total_muestra_antigenica = sum(muestra_antigenica)
 gen total_recuperado = sum(recuperado)
 gen total_sintomaticos = sum(sintomaticos)
 gen total_defunciones = sum(defunc)
 gen total_inicio = sum(inicio)
 gen total_inicio_molecular = sum(inicio_molecular)
 gen total_inicio_rapida = sum(inicio_rapida)
+gen total_inicio_antigenica = sum(inicio_antigenica)
 
 ** Generar tasa de positividad
 
 gen posi = positivo/muestra
 gen posi_rapida = positivo_rapida/muestra_rapida
 gen posi_molecular = positivo_molecular/muestra_molecular
+gen posi_antigenica = positivo_antigenica/muestra_antigenica
 
 *** Generar primera y segunda ola para variables de interés
 tsset fecha 
