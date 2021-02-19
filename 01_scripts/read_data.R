@@ -41,6 +41,9 @@ read_data_map_district <- function() {
 read_data_beds <- function() {
   
   data_beds_melt <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/camas/camas.csv", sep2 = ";")
+  data_beds_melt <- mutate(data_beds_melt, UCI_percent = UCI*100)  
+  data_beds_melt <- mutate(data_beds_melt, NOUCI_percent = NOUCI*100)  
+  data_beds_melt <- mutate(data_beds_melt, NIVELII_percent = NIVELII*100)  
   data_beds_melt[, DateRep := lubridate::mdy(DateRep)]
   
   return(data_beds_melt)

@@ -181,8 +181,9 @@ shinyServer(function(input, output, session){
   output$dygraph_region_casos <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, positivo)]) %>%
-      dySeries("positivo", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dyAxis("x", label = "Fecha") %>%
+      dySeries("positivo",label = "Número de casos") %>%
+      dyAxis("y", label = "Número de casos",valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -201,8 +202,9 @@ shinyServer(function(input, output, session){
   output$dygraph_region_defunciones <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, defunciones)]) %>%
-      dySeries("defunciones", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("defunciones", label = "Número de defunciones") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Número de defunciones",valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#142850", strokeColor = "#222d32") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -220,10 +222,12 @@ shinyServer(function(input, output, session){
   ## Camas
   output$dygraph_region_camas <- renderDygraph({
     
-    dygraph(data_beds()[, .(DateRep, UCI, NOUCI, NIVELII)]) %>%
-      dySeries("UCI", label = "Ocupacion UCI") %>%
-      dySeries("NOUCI", label = "Ocupacion No UCI") %>%
-      dySeries("NIVELII", label = "Ocupacion Nivel II") %>%
+    dygraph(data_beds()[, .(DateRep, UCI_percent, NOUCI_percent, NIVELII_percent)]) %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Porcentaje de ocupación UCI",valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("UCI_percent", label = "% Ocupacion UCI") %>%
+      dySeries("NOUCI_percent", label = "% Ocupacion No UCI") %>%
+      dySeries("NIVELII_percent", label = "% Ocupacion Nivel II") %>%
       dyRangeSelector(dateWindow = c(data_beds()[, max(DateRep) - 80], data_beds()[, max(DateRep) + 1]),
                       fillColor = c("#03045e", "#3a0ca3","#7371fc"), strokeColor = "#03045e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -275,9 +279,9 @@ shinyServer(function(input, output, session){
                   }
                 ")
       ) %>%
-      dyShading(from = "0", to = "0.25", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
-      dyShading(from = "0.25", to = "0.65", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "0.65", to = "1.5", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "0", to = "25", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "25", to = "65", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "65", to = "150", color = "rgb(239, 79, 79, 0.7)", axis = "y")
     
   })
   
@@ -286,8 +290,9 @@ shinyServer(function(input, output, session){
   output$dygraph_region_positividad_molecular <- renderDygraph({
     
     dygraph(data_dpto_r()[, .(fecha, posi_molecular_percent)]) %>%
-      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
+      dySeries("posi_molecular_percent", label = "Tasa de positividad") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_dpto_r()[, max(fecha) - 80], data_dpto_r()[, max(fecha) + 1]),
                       fillColor = "#142850", strokeColor = "#222d32") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -643,8 +648,9 @@ shinyServer(function(input, output, session){
     shiny::req(input$prov)
     
     dygraph(data_prov_subset()[, .(fecha, positivo)], main = input$prov) %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
-      dySeries("positivo", label = "Promedio de 7 dias") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Número de casos", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("positivo", label = "Número de casos") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -667,8 +673,9 @@ shinyServer(function(input, output, session){
     
     dygraph(data_prov_subset()[, .(fecha, defunciones)],
             main = input$prov) %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
-      dySeries("defunciones", label = "Promedio de 7 dias") %>%
+      dyAxis("y", label = "Número de defunciones",  valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dyAxis("x", label = "Fecha") %>%
+      dySeries("defunciones", label = "Número de defunciones") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -692,8 +699,9 @@ shinyServer(function(input, output, session){
     
     dygraph(data_prov_subset()[, .(fecha, posi_molecular_percent)],
             main = input$prov) %>%
-      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
+      dySeries("posi_molecular_percent", label = "Tasa de positividad") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -922,8 +930,9 @@ shinyServer(function(input, output, session){
             main = input$prov) %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
-      dySeries("positivo", label = "Promedio de 7 dias") %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("positivo", label = "Número de casos") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y",label = "Número de casos", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
                 fillGraph = FALSE, fillAlpha = 0.4,
                 drawPoints = FALSE, pointSize = 3,
@@ -945,8 +954,9 @@ shinyServer(function(input, output, session){
     
     dygraph(data_dis_subset()[, .(fecha, defunciones)],
             main = input$dis) %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
-      dySeries("defunciones", label = "Promedio de 7 dias") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Número de defunciones" , valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dySeries("defunciones", label = "Número de defunciones") %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyAxis("y", valueFormatter = JS(valueFormatter_rounded) ) %>%
@@ -971,8 +981,9 @@ shinyServer(function(input, output, session){
     
     dygraph(data_dis_subset()[, .(fecha, posi_molecular_percent)],
             main = input$dis) %>%
-      dyAxis("y", valueFormatter = JS(valueFormatter_percent) ) %>%
-      dySeries("posi_molecular_percent", label = "Promedio de 7 dias") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad",valueFormatter = JS(valueFormatter_percent) ) %>%
+      dySeries("posi_molecular_percent", label = "Tasa de positividad molecular") %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
