@@ -649,7 +649,7 @@ shinyServer(function(input, output, session){
     
     dygraph(data_prov_subset()[, .(fecha, positivo)], main = input$prov) %>%
       dyAxis("x", label = "Fecha") %>%
-      dyAxis("y", label = "Número de casos", valueFormatter = JS(valueFormatter_rounded) ) %>%
+      # dyAxis("y", label = "Número de casos", valueFormatter = JS(valueFormatter_rounded) ) %>%
       dySeries("positivo", label = "Número de casos") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
@@ -673,7 +673,7 @@ shinyServer(function(input, output, session){
     
     dygraph(data_prov_subset()[, .(fecha, defunciones)],
             main = input$prov) %>%
-      dyAxis("y", label = "Número de defunciones",  valueFormatter = JS(valueFormatter_rounded) ) %>%
+      # dyAxis("y", label = "Número de defunciones",  valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyAxis("x", label = "Fecha") %>%
       dySeries("defunciones", label = "Número de defunciones") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
@@ -701,7 +701,7 @@ shinyServer(function(input, output, session){
             main = input$prov) %>%
       dySeries("posi_molecular_percent", label = "Tasa de positividad") %>%
       dyAxis("x", label = "Fecha") %>%
-      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
+      # dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
