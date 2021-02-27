@@ -37,3 +37,4 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+data/stata/data-covid-unir-variables-brandon.dta
