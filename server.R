@@ -673,7 +673,7 @@ shinyServer(function(input, output, session){
     
     dygraph(data_prov_subset()[, .(fecha, defunciones)],
             main = input$prov) %>%
-      # dyAxis("y", label = "Número de defunciones",  valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dyAxis("y", label = "Número de defunciones",  valueFormatter = JS(valueFormatter_rounded) ) %>%
       dyAxis("x", label = "Fecha") %>%
       dySeries("defunciones", label = "Número de defunciones") %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
@@ -701,7 +701,7 @@ shinyServer(function(input, output, session){
             main = input$prov) %>%
       dySeries("posi_molecular_percent", label = "Tasa de positividad") %>%
       dyAxis("x", label = "Fecha") %>%
-      # dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent) ) %>%
       dyRangeSelector(dateWindow = c(data_prov_subset()[, max(fecha) - 50], data_prov_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
@@ -714,7 +714,7 @@ shinyServer(function(input, output, session){
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
       dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
   })  
   
   
@@ -996,7 +996,7 @@ shinyServer(function(input, output, session){
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
       dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
   })  
   
   
