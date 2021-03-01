@@ -940,7 +940,7 @@ shinyServer(function(input, output, session){
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = data_semaforo_dis_subset()[, .(cases_q0)], to = data_semaforo_dis_subset()[, .(cases_q1)], color = "#74c7b8", axis = "y") %>%
       dyShading(from = data_semaforo_dis_subset()[, .(cases_q1)], to = data_semaforo_dis_subset()[, .(cases_q2)], color = "#ffcda3", axis = "y") %>%
       dyShading(from = data_semaforo_dis_subset()[, .(cases_q2)], to = data_semaforo_dis_subset()[, .(cases_q3)], color = "#ef4f4f", axis = "y")
@@ -967,7 +967,7 @@ shinyServer(function(input, output, session){
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = data_semaforo_dis_subset()[, .(deaths_q0)], to = data_semaforo_dis_subset()[, .(deaths_q1)], color = "#74c7b8", axis = "y") %>%
       dyShading(from = data_semaforo_dis_subset()[, .(deaths_q1)], to = data_semaforo_dis_subset()[, .(deaths_q2)], color = "#ffcda3", axis = "y") %>%
       dyShading(from = data_semaforo_dis_subset()[, .(deaths_q2)], to = data_semaforo_dis_subset()[, .(deaths_q3)], color = "#ef4f4f", axis = "y")
@@ -993,7 +993,7 @@ shinyServer(function(input, output, session){
                 colors = c("#003169")) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
       dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
-      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      # dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
       dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
       dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
