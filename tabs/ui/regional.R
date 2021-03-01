@@ -14,9 +14,9 @@ regional <- tabPanel(title = "Nivel Regional",
                    # downloadButton("reporte", "Generar reporte"),
                    fluidRow(
                    box(width = 12, 
-                   valueBox(h2(strong("14,795")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
-                   valueBox(h2(strong("84,463")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
-                   valueBox(h2(strong("513")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
+                   valueBox(h2(strong("15,738")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
+                   valueBox(h2(strong("89,800")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
+                   valueBox(h2(strong("564")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
                  ),
 
                 # Fila 1

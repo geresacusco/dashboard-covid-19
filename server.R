@@ -927,7 +927,7 @@ shinyServer(function(input, output, session){
     shiny::req(input$dis)
     
     dygraph(data_dis_subset()[, .(fecha, positivo)],
-            main = input$prov) %>%
+            main = input$dis) %>%
       dyRangeSelector(dateWindow = c(data_dis_subset()[, max(fecha) - 50], data_dis_subset()[, max(fecha) + 1]),
                       fillColor = "#003169", strokeColor = "00909e") %>%
       dySeries("positivo", label = "Número de casos") %>%
