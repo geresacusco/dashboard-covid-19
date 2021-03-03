@@ -27,17 +27,34 @@ shinyServer(function(input, output, session){
   data_dpto_r <- reactive({
     data_dpto <- read_data_dpto()
   })
-  
+
+  data_dpto_r2 <- reactive({
+    data_dpto <- read_data_dpto()
+    data_dpto <- filter(data_dpto, fecha > "2021-01-01")
+  })
+    
   # Provincial (semaforo V2)
   
   data_prov_r <- reactive({
     data_prov <- read_data_prov()
   })
   
+  data_prov_r2 <- reactive({
+    data_prov <- read_data_prov()
+    data_prov <- filter(data_prov, fecha > "2021-01-01")
+    
+  })
+  
   # Distrital (semaforo v2)
   
   data_dis_r <- reactive({
     data_dis <- read_data_dis()
+  })  
+  
+  data_dis_r2 <- reactive({
+    data_dis <- read_data_dis()
+    data_dis <- filter(data_dis, fecha > "2021-01-01")
+    
   })  
   
   # Cusco (semaforo)
@@ -303,10 +320,31 @@ shinyServer(function(input, output, session){
       dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
       dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
       dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
-      dyShading(from = "30", to = "74", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
     
   })
   
+  ## Positividad antigenica
+  
+  output$dygraph_region_positividad_antigenica <- renderDygraph({
+    
+    dygraph(data_dpto_r2()[, .(fecha, posi_antigenica_percent)]) %>%
+      dySeries("posi_antigenica_percent", label = "Tasa de positividad") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent), valueRange = c(0, 40) ) %>%
+      dyRangeSelector(dateWindow = c(data_dpto_r2()[, max(fecha) - 30], data_dpto_r2()[, max(fecha) + 1]),
+                      fillColor = "#142850", strokeColor = "#222d32") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#142850", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
   
 
   ### 2) Código para graficar el mapa del cusco ----
@@ -718,6 +756,33 @@ shinyServer(function(input, output, session){
   })  
   
   
+  
+  ## Positividad antigenica
+  
+  output$dygraph_prov_positividad_antigenica <- renderDygraph({
+    
+    shiny::req(input$prov)
+    
+    dygraph(data_prov_r2()[, .(fecha, posi_antigenica_percent)]) %>%
+      dySeries("posi_antigenica_percent", label = "Tasa de positividad") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent), valueRange = c(0, 40) ) %>%
+      dyRangeSelector(dateWindow = c(data_prov_r2()[, max(fecha) - 30], data_prov_r2()[, max(fecha) + 1]),
+                      fillColor = "#142850", strokeColor = "#222d32") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#142850", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  
+  
   # ## 3)  Semaforos comparativos (Paquete Dygraph)
   # 
   # ## Casos
@@ -1000,6 +1065,31 @@ shinyServer(function(input, output, session){
   })  
   
   
+  ## Positividad antigenica
+  
+  output$dygraph_dis_positividad_antigenica <- renderDygraph({
+    
+    shiny::req(input$dis)
+    
+    dygraph(data_dis_r2()[, .(fecha, posi_antigenica_percent)]) %>%
+      dySeries("posi_antigenica_percent", label = "Tasa de positividad") %>%
+      dyAxis("x", label = "Fecha") %>%
+      dyAxis("y", label = "Tasa de positividad", valueFormatter = JS(valueFormatter_percent), valueRange = c(0, 40) ) %>%
+      dyRangeSelector(dateWindow = c(data_dis_r2()[, max(fecha) - 30], data_dis_r2()[, max(fecha) + 1]),
+                      fillColor = "#142850", strokeColor = "#222d32") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#142850", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE)  %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7) %>%
+      dyShading(from = "0", to = "15", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      dyShading(from = "15", to = "30", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      dyShading(from = "30", to = "100", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+  
+  
   # ## 3)  Semaforos comparativos (Paquete Dygraph)
   # 
   # ## Casos
@@ -1219,14 +1309,5 @@ shinyServer(function(input, output, session){
   #   }
   # )
   
-  
-  
-  
-  
-  
-  
-  
-  
-    
   
 })

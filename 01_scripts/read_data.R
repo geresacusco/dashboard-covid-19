@@ -7,6 +7,8 @@ read_data_dpto <- function() {
   data_dpto <- subset(data_dpto, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
   data_dpto <- mutate(data_dpto, xposi=log10(total_positivo), xini = log10(total_inicio))
   data_dpto <- mutate(data_dpto, posi_molecular_percent = posi_molecular*100)  
+  data_dpto <- mutate(data_dpto, posi_antigenica_percent = posi_antigenica*100)  
+  
   return(data_dpto)
 }
 
@@ -15,7 +17,8 @@ read_data_prov <- function() {
   data_prov <- fread("https://raw.githubusercontent.com/geresacusco/dashboard-covid-19/main/data/data_provincial.csv", keepLeadingZeros = TRUE)
   data_prov$fecha <- as.Date(data_prov$fecha)
   data_prov <- subset(data_prov, fecha > as.Date("2020-03-12") & fecha < Sys.Date() - 1)
-  data_prov <- mutate(data_prov, posi_molecular_percent = posi_molecular*100)  
+  data_prov <- mutate(data_prov, posi_molecular_percent = posi_molecular*100)
+  data_prov <- mutate(data_prov, posi_antigenica_percent = posi_antigenica*100)  
   return(data_prov)
 }
 
@@ -26,6 +29,8 @@ read_data_dis <- function() {
   data_dis <- subset(data_dis, fecha > as.Date("2020-03-12") & fecha < Sys.Date() -1)
   data_dis <- mutate(data_dis, IDDIST = ubigeo)
   data_dis <- mutate(data_dis, posi_molecular_percent = posi_molecular*100)  
+  data_dis <- mutate(data_dis, posi_antigenica_percent = posi_antigenica*100)  
+  
   return(data_dis)
 
 }

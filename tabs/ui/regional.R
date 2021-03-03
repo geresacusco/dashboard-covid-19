@@ -14,9 +14,9 @@ regional <- tabPanel(title = "Nivel Regional",
                    # downloadButton("reporte", "Generar reporte"),
                    fluidRow(
                    box(width = 12, 
-                   valueBox(h2(strong("15,738")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
-                   valueBox(h2(strong("89,800")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
-                   valueBox(h2(strong("564")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
+                   valueBox(h2(strong("16,418")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
+                   valueBox(h2(strong("92,967")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
+                   valueBox(h2(strong("602")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
                  ),
 
                 # Fila 1
@@ -83,6 +83,27 @@ regional <- tabPanel(title = "Nivel Regional",
                                              p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
                                           el primer caso confirmado por COVID-19 en la región.")),
                                     tabPanel("Resumen", "El semáforo COVID-19 de tasa de positividad molecular muestra
+                               el nivel de riesgo respecto al número total de personas infectadas por muestras moleculares procesadas
+                               por COVID-19.", br(), br(),
+                                             p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
+las precauciones aumentan. En esta zona el nivel y velocidad de contagio por muestras moleculares es mucho más elevada.
+Se recomienda salir de casa solo en casos excepcionales y tomando muy en cuenta las medidas
+de seguridad sanitaria. ", br(), br(),
+                                               "El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
+actividades, siempre tomando en consideración las medidas de seguridad sanitaria.", br(), br(),
+                                               "El color", strong("verde"), "representa que el nivel de riesgo no es tan elevado respecto a los
+otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
+"))
+                                  )),
+                         
+                         tabPanel("Tasa de positividad antigenica",
+                                  tabsetPanel(
+                                    tabPanel("Gráfico", dygraphOutput("dygraph_region_positividad_antigenica"),
+                                             h4(strong("Descripción de los ejes")),
+                                             p(div(strong("Eje Y: "), em("Tasa de positividad de pruebas antigenicas (promedio de 7 días)."), style = "color:blue")),
+                                             p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
+                                          el primer caso confirmado por COVID-19 en la región.")),
+                                    tabPanel("Resumen", "El semáforo COVID-19 de tasa de positividad antigenica muestra
                                el nivel de riesgo respecto al número total de personas infectadas por muestras moleculares procesadas
                                por COVID-19.", br(), br(),
                                              p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
