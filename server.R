@@ -193,7 +193,7 @@ shinyServer(function(input, output, session){
   
  valueFormatter_percent = "function(y) {
     return y.toFixed(0) + '%';}"
-  
+
   ## Casos
   output$dygraph_region_casos <- renderDygraph({
     
@@ -214,6 +214,29 @@ shinyServer(function(input, output, session){
       dyShading(from = "1118.355", to = "1491.14", color = "rgb(239, 79, 79, 0.7)", axis = "y")
     
   })
+  
+  
+  ## Casos antigenica
+  output$dygraph_region_casos_antigenica <- renderDygraph({
+    
+    dygraph(data_dpto_r2()[, .(fecha, positivo_antigenica)]) %>%
+      dyAxis("x", label = "Fecha") %>%
+      dySeries("positivo_antigenica",label = "Número de casos") %>%
+      dyAxis("y", label = "Número de casos",valueFormatter = JS(valueFormatter_rounded) ) %>%
+      dyRangeSelector(dateWindow = c(data_dpto_r2()[, max(fecha) - 80], data_dpto_r2()[, max(fecha) + 1]),
+                      fillColor = "#003169", strokeColor = "00909e") %>%
+      dyOptions(useDataTimezone = TRUE, strokeWidth = 2,
+                fillGraph = FALSE, fillAlpha = 0.4,
+                colors = c("#003169", "", "")) %>%
+      dyHighlight(highlightSeriesOpts = list(strokeWidth = 2.5, pointSize = 4)) %>%
+      dyLegend(width = 150, show = "follow", hideOnMouseOut = TRUE, labelsSeparateLines = TRUE) %>%
+      dyRoller(showRoller = FALSE, rollPeriod = 7)
+      # dyShading(from = "0", to = "40.5", color = "rgb(116, 199, 184, 0.7)", axis = "y") %>%
+      # dyShading(from = "40.5", to = "121.5", color = "rgb(255, 205, 163, 0.7)", axis = "y") %>%
+      # dyShading(from = "121.5", to = "162", color = "rgb(239, 79, 79, 0.7)", axis = "y")
+    
+  })
+
   
   ## Defunciones
   output$dygraph_region_defunciones <- renderDygraph({

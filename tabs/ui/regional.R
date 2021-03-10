@@ -14,13 +14,14 @@ regional <- tabPanel(title = "Nivel Regional",
                    # downloadButton("reporte", "Generar reporte"),
                    fluidRow(
                    box(width = 12, 
-                   valueBox(h2(strong("16,418")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
-                   valueBox(h2(strong("92,967")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
-                   valueBox(h2(strong("602")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
+                   valueBox(h2(strong("18,860")), "Casos totales 2021", icon = icon("virus", "fa-2x")),
+                   valueBox(h2(strong("107,850")), "Pruebas procesadas 2021 (moleculares, rápidas y antigénicas)", icon = icon("vial", "fa-2x")),
+                   valueBox(h2(strong("718")), "Total Fallecidos 2021", icon = icon("skull-crossbones","fa-2x")))
                  ),
 
                 # Fila 1
-                
+
+                                
                 fluidRow(
                   tabBox(title = h4(strong("Mapa Temático")),
                     tabPanel("Total Positivo",
@@ -54,6 +55,8 @@ regional <- tabPanel(title = "Nivel Regional",
                                         "Los colores intermedios cambian según las zonas
                                         se encuentren más o menos afectadas.")
                              )),
+                    
+            
                     tabPanel("Positivo Molecular",
                              tabsetPanel(
                                tabPanel("Gráfico", highchartOutput("map_pm_positivo")),
@@ -73,6 +76,7 @@ regional <- tabPanel(title = "Nivel Regional",
                   ),
                   
                   tabBox(title = h4(strong("Semáforo COVID")),
+                         
                          
                          
                          tabPanel("Tasa de positividad molecular",
@@ -95,7 +99,9 @@ actividades, siempre tomando en consideración las medidas de seguridad sanitari
 otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
 "))
                                   )),
-                         
+
+
+                                                                           
                          tabPanel("Tasa de positividad antigenica",
                                   tabsetPanel(
                                     tabPanel("Gráfico", dygraphOutput("dygraph_region_positividad_antigenica"),
@@ -116,7 +122,9 @@ actividades, siempre tomando en consideración las medidas de seguridad sanitari
 otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
 "))
                                   )),
+
                          
+                                                  
                       
                     tabPanel("Casos",
                              tabsetPanel(
@@ -138,6 +146,36 @@ actividades, siempre tomando en consideración las medidas de seguridad sanitari
 otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
 "))
                              )),
+
+
+
+
+
+
+tabPanel("Casos antigenica",
+         tabsetPanel(
+           tabPanel("Gráfico",dygraphOutput("dygraph_region_casos_antigenica"),
+                    h4(strong("Descripción de los ejes")),
+                    p(div(strong("Eje Y: "), em("Casos positivos por prueba antigenica por COVID-19 en la Región Cusco."), style = "color:blue")),
+                    p(div(strong("Eje X: "), em("Días."), style = "color:blue"), "El primer día de la serie corresponde al 13/03/2020, fecha en la cual se reportó
+                                          el primer caso confirmado por COVID-19 en la región.")),
+           tabPanel("Resumen", "El semáforo COVID-19 de casos muestra
+                               el nivel de riesgo respecto al número total de contagiados
+                               por COVID-19.", br(), br(),
+                    p("El color", strong("rojo"), "representa un nivel elevado de riesgo, en esta zona
+las precauciones aumentan. En esta zona el nivel y velocidad de contagio es mucho más elevada.
+Se recomienda salir de casa solo en casos excepcionales y tomando muy en cuenta las medidas
+de seguridad sanitaria. ", br(), br(),
+                      "El color", strong("amarillo"), "representa un nivel de riesgo moderado. Aunque el riesgo aún se mantiene, se pueden realizar más
+actividades, siempre tomando en consideración las medidas de seguridad sanitaria.", br(), br(),
+                      "El color", strong("verde"), "representa que el nivel de riesgo no es tan elevado respecto a los
+otros colores. En todo momento se deberían tomar en cuenta las medidas de seguridad sanitaria. 
+"))
+         )),
+
+
+
+
                     tabPanel("Defunciones",
                              tabsetPanel(
                                tabPanel("Gráfico",dygraphOutput("dygraph_region_defunciones"),
@@ -158,6 +196,8 @@ presente, pero no es tan elevada respecto a los otros colores. En todo tiempo de
 exponernos al COVID-19, necesitamos cuidarnos y cuidar a los nuestros.
 ")
                              )),
+
+
                     tabPanel("Camas",
                              tabsetPanel(
                                tabPanel("Gráfico", dygraphOutput("dygraph_region_camas"),
