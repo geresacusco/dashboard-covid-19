@@ -5,8 +5,8 @@ account: geresacusco
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3501103
-bundleId: 4326239
+bundleId: 4352485
 url: https://geresacusco.shinyapps.io/DASHBOARD_COVID-19_CUSCO/
-when: 1615383225.87522
+when: 1615894536.45858
 asMultiple: FALSE
 asStatic: FALSE
