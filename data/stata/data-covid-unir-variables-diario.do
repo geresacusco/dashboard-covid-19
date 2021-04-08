@@ -19,7 +19,7 @@ set more off, permanent
 
 *** 1. Pasos previos
 
-use "${stata}/data-covid-unir-variables-brandon.dta", clear
+use "${stata}/data_dashboard.dta", clear
 drop ubigeo
 
 ** Quitar acentos a nombres de distritos
